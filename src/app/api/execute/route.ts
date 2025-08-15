@@ -1,7 +1,9 @@
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { executeSql } from '@/lib/sqlExecutor';
 
-// BigIntを文字列に変換するヘルパー関数
 function convertBigIntToString(obj: any): any {
   if (obj === null || obj === undefined) {
     return obj;
@@ -36,7 +38,6 @@ export async function POST(req: Request) {
 
   try {
     const rows = await executeSql(sql, dbName);
-    // BigIntを文字列に変換してからレスポンスを返す
     const serializedRows = convertBigIntToString(rows);
     return NextResponse.json({ rows: serializedRows });
   } catch (err: unknown) {
@@ -44,5 +45,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
-
-

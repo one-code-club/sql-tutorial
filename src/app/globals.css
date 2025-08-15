@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+}
+
+.dark {
+  --background: 222 40% 10%;
+  --foreground: 210 40% 98%;
+}
+
+html, body, #__next {
+  height: 100%;
+}
+
+body {
+  @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900;
+}
+
+.badge {
+  @apply inline-flex items-center rounded-md border px-3 py-1.5 text-sm font-medium transition-colors;
+}
+.badge-keyword { @apply bg-brand-400/20 text-brand-200 border-brand-400/30 dark:bg-brand-400/20 dark:text-brand-100 dark:border-brand-400/30; }
+.badge-column { @apply bg-sky-400/20 text-sky-100 border-sky-400/30 dark:bg-sky-400/20 dark:text-sky-50 dark:border-sky-400/30; }
+.badge-db { @apply bg-emerald-500/20 text-emerald-100 border-emerald-400/30 dark:bg-emerald-400/20 dark:text-emerald-50 dark:border-emerald-400/30; }
+
+

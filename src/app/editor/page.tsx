@@ -1,0 +1,123 @@
+"use client";
+
+import { useEffect, useMemo, useState } from 'react';
+import { Header } from '@/components/Header';
+import { LeftPane } from '@/components/LeftPane';
+import { SQLEditor } from '@/components/SQLEditor';
+import { ResultGrid } from '@/components/ResultGrid';
+import { QuerySaveModal } from '@/components/QuerySaveModal';
+import { useAppStore } from '@/store/useAppStore';
+
+export default function EditorPage() {
+  const {
+    nickname,
+    selectedDB,
+    setSelectedDB,
+    columns,
+    setColumns,
+    queries,
+    setQueries,
+  } = useAppStore();
+
+  const [sql, setSql] = useState<string>('SELECT ');
+  const [showSave, setShowSave] = useState(false);
+  const [result, setResult] = useState<any[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadFiles() {
+      const res = await fetch('/api/files');
+      const data: { files: string[] } = await res.json();
+      if (!selectedDB && data.files[0]) setSelectedDB(data.files[0]);
+    }
+    loadFiles();
+  }, [selectedDB, setSelectedDB]);
+
+  useEffect(() => {
+    async function loadColumns() {
+      if (!selectedDB) return;
+      const res = await fetch(`/api/files?db=${encodeURIComponent(selectedDB)}`);
+      const data: { columns: string[] } = await res.json();
+      setColumns(data.columns);
+    }
+    loadColumns();
+  }, [selectedDB, setColumns]);
+
+  useEffect(() => {
+    async function fetchQueries() {
+      if (!nickname) return;
+      const res = await fetch(`/api/queries?nickname=${encodeURIComponent(nickname)}`);
+      const data = await res.json();
+      setQueries(data.queries ?? []);
+    }
+    fetchQueries();
+  }, [nickname, setQueries]);
+
+  const keywordBadges = useMemo(
+    () => ['SELECT', 'DISTINCT', '*', 'FROM', 'WHERE', 'AND', 'OR', 'MIN', 'MAX', 'LIMIT', 'ORDER BY', 'ASC', 'DESC'],
+    []
+  );
+
+  async function handleRun() {
+    if (!selectedDB) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sql, dbName: selectedDB }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setResult([]);
+        setError(String(data.error ?? 'SQLの実行に失敗しました。内容を確認してください。'));
+      } else {
+        setError(null);
+        setResult(data.rows ?? []);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="flex min-h-dvh flex-col bg-transparent text-slate-100">
+      <Header />
+      <div className="grid flex-1 grid-cols-12 gap-3 p-3">
+      <LeftPane
+          keywordBadges={keywordBadges}
+          columns={columns}
+          onSelectQuery={setSql}
+        />
+
+        <div className="col-span-6 flex flex-col gap-3">
+          <SQLEditor value={sql} onChange={setSql} />
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleRun}
+              className="rounded-md bg-brand-500 px-4 py-2 text-white shadow-lg shadow-brand-500/30 hover:bg-brand-400 hover:shadow-brand-400/40 transition"
+            >
+              実行
+            </button>
+            <button
+              onClick={() => setShowSave(true)}
+              className="rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-slate-100 hover:bg-slate-700"
+            >
+              保存
+            </button>
+          </div>
+        </div>
+
+        <div className="col-span-4">
+          <ResultGrid rows={result ?? []} loading={loading} error={error} />
+        </div>
+      </div>
+
+      <QuerySaveModal open={showSave} onOpenChange={setShowSave} sql={sql} />
+    </div>
+  );
+}
+
+

@@ -3,10 +3,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Header } from '@/components/Header';
 import { LeftPane } from '@/components/LeftPane';
+import { BlocklyEditor } from '@/components/BlocklyEditor';
 import { SQLEditor } from '@/components/SQLEditor';
 import { ResultGrid } from '@/components/ResultGrid';
 import { QuerySaveModal } from '@/components/QuerySaveModal';
 import { useAppStore } from '@/store/useAppStore';
+
+type EditorType = 'block' | 'text';
 
 export default function EditorPage() {
   const {
@@ -19,11 +22,19 @@ export default function EditorPage() {
     setQueries,
   } = useAppStore();
 
-  const [sql, setSql] = useState<string>('SELECT ');
+  const [sql, setSql] = useState<string>('');
+  const [editorType, setEditorType] = useState<EditorType>('block');
   const [showSave, setShowSave] = useState(false);
   const [result, setResult] = useState<any[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  function handleEditorTypeChange(type: EditorType) {
+    if (editorType !== type) {
+      setSql('');
+      setEditorType(type);
+    }
+  }
 
   useEffect(() => {
     async function loadFiles() {
@@ -90,10 +101,36 @@ export default function EditorPage() {
           keywordBadges={keywordBadges}
           columns={columns}
           onSelectQuery={setSql}
+          editorType={editorType}
         />
 
         <div className="col-span-6 flex flex-col gap-3">
-          <SQLEditor value={sql} onChange={setSql} />
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-200">
+              「ブロックエディタ」か「テキストエディタ」のどちらかを選んでください
+            </label>
+            <div className="flex items-center gap-2 rounded-md border border-slate-700 bg-slate-900 p-1 w-fit">
+              <button
+                onClick={() => handleEditorTypeChange('block')}
+                className={`px-3 py-1 text-sm rounded-md ${editorType === 'block' ? 'bg-slate-700 text-white' : 'text-slate-400'}`}
+              >
+                ブロックエディタ
+              </button>
+              <button
+                onClick={() => handleEditorTypeChange('text')}
+                className={`px-3 py-1 text-sm rounded-md ${editorType === 'text' ? 'bg-slate-700 text-white' : 'text-slate-400'}`}
+              >
+                テキストエディタ
+              </button>
+            </div>
+          </div>
+
+          {editorType === 'block' ? (
+            <BlocklyEditor value={sql} onChange={setSql} />
+          ) : (
+            <SQLEditor value={sql} onChange={setSql} />
+          )}
+
           <div className="flex items-center gap-3">
             <button
               onClick={handleRun}

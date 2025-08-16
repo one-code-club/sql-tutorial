@@ -7,9 +7,10 @@ type Props = {
   keywordBadges: string[];
   columns: string[];
   onSelectQuery: (text: string) => void;
+  editorType: 'block' | 'text';
 };
 
-export function LeftPane({ keywordBadges, columns, onSelectQuery }: Props) {
+export function LeftPane({ keywordBadges, columns, onSelectQuery, editorType }: Props) {
   const { selectedDB, setSelectedDB, queries, setQueries, nickname } = useAppStore();
   const [files, setFiles] = useState<string[]>([]);
 
@@ -22,8 +23,13 @@ export function LeftPane({ keywordBadges, columns, onSelectQuery }: Props) {
     loadFiles();
   }, []);
 
-  function handleDragStart(e: React.DragEvent<HTMLSpanElement>, text: string) {
-    e.dataTransfer.setData('text/plain', text);
+  function handleDragStart(e: React.DragEvent<HTMLSpanElement>, text: string, blockType?: 'sql_table' | 'sql_column') {
+    if (editorType === 'block' && blockType) {
+        const data = JSON.stringify({ blockType, value: text });
+        e.dataTransfer.setData('text/plain', data);
+    } else {
+        e.dataTransfer.setData('text/plain', text);
+    }
   }
 
   async function handleDelete(id: string) {
@@ -53,7 +59,7 @@ export function LeftPane({ keywordBadges, columns, onSelectQuery }: Props) {
           <div className="mt-2">
             <span
               draggable
-              onDragStart={(e) => handleDragStart(e, selectedDB)}
+              onDragStart={(e) => handleDragStart(e, selectedDB, 'sql_table')}
               className="badge badge-db cursor-grab select-none"
               title="ドラッグしてエディタに挿入"
             >
@@ -86,7 +92,7 @@ export function LeftPane({ keywordBadges, columns, onSelectQuery }: Props) {
             <span
               key={c}
               draggable
-              onDragStart={(e) => handleDragStart(e, c)}
+              onDragStart={(e) => handleDragStart(e, c, 'sql_column')}
               className="badge badge-column cursor-grab select-none"
             >
               {c}

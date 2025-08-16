@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { BlocklyWorkspace } from 'react-blockly';
 import * as Blockly from 'blockly/core';
-import {javascriptGenerator} from 'blockly/javascript';
+import DarkTheme from '@blockly/theme-dark';
+import { javascriptGenerator, Order } from 'blockly/javascript';
+import 'blockly/blocks';
 
 // カスタムブロックの定義
 Blockly.defineBlocksWithJsonArray([
@@ -174,15 +176,33 @@ Blockly.defineBlocksWithJsonArray([
         "nextStatement": null,
         "colour": 260,
         "tooltip": "Limit clause"
+    },
+    {
+        "type": "sql_column_list",
+        "message0": "%1 , %2",
+        "args0": [
+            {
+                "type": "input_value",
+                "name": "COLUMN1"
+            },
+            {
+                "type": "input_value",
+                "name": "COLUMN2"
+            }
+        ],
+        "output": "String",
+        "colour": 20,
+        "inputsInline": true,
+        "tooltip": "List of columns"
     }
 ]);
 
 // カスタムブロックのSQLジェネレーター
 javascriptGenerator.forBlock['sql_select'] = function(block: Blockly.Block) {
     const distinct = block.getFieldValue('DISTINCT') === 'TRUE' ? 'DISTINCT ' : '';
-    const columns = javascriptGenerator.valueToCode(block, 'COLUMNS', javascriptGenerator.ORDER_ATOMIC) || '*';
-    const table = javascriptGenerator.valueToCode(block, 'TABLE', javascriptGenerator.ORDER_ATOMIC) || 'your_table';
-    const where = javascriptGenerator.valueToCode(block, 'WHERE', javascriptGenerator.ORDER_ATOMIC);
+    const columns = javascriptGenerator.valueToCode(block, 'COLUMNS', Order.ATOMIC) || '*';
+    const table = javascriptGenerator.valueToCode(block, 'TABLE', Order.ATOMIC) || 'your_table';
+    const where = javascriptGenerator.valueToCode(block, 'WHERE', Order.ATOMIC);
     
     let code = `SELECT ${distinct}${columns} FROM ${table}`;
     if (where) {
@@ -193,25 +213,25 @@ javascriptGenerator.forBlock['sql_select'] = function(block: Blockly.Block) {
 
 javascriptGenerator.forBlock['sql_table'] = function(block: Blockly.Block) {
     const tableName = block.getFieldValue('TABLE_NAME');
-    return [tableName, javascriptGenerator.ORDER_ATOMIC];
+    return [tableName, Order.ATOMIC];
 };
 
 javascriptGenerator.forBlock['sql_column'] = function(block: Blockly.Block) {
     const columnName = block.getFieldValue('COLUMN_NAME');
-    return [columnName, javascriptGenerator.ORDER_ATOMIC];
+    return [columnName, Order.ATOMIC];
 };
 
 javascriptGenerator.forBlock['sql_compare'] = function(block: Blockly.Block) {
     const operator = block.getFieldValue('OP');
-    const argument0 = javascriptGenerator.valueToCode(block, 'A', javascriptGenerator.ORDER_ATOMIC) || 'NULL';
-    const argument1 = javascriptGenerator.valueToCode(block, 'B', javascriptGenerator.ORDER_ATOMIC) || 'NULL';
+    const argument0 = javascriptGenerator.valueToCode(block, 'A', Order.ATOMIC) || 'NULL';
+    const argument1 = javascriptGenerator.valueToCode(block, 'B', Order.ATOMIC) || 'NULL';
     const code = `${argument0} ${operator} ${argument1}`;
-    return [code, javascriptGenerator.ORDER_RELATIONAL];
+    return [code, Order.RELATIONAL];
 };
 
 javascriptGenerator.forBlock['sql_logic_operator'] = function(block: Blockly.Block) {
     const operator = block.getFieldValue('OP');
-    const order = (operator === 'AND') ? javascriptGenerator.ORDER_LOGICAL_AND : javascriptGenerator.ORDER_LOGICAL_OR;
+    const order = (operator === 'AND') ? Order.LOGICAL_AND : Order.LOGICAL_OR;
     const argument0 = javascriptGenerator.valueToCode(block, 'A', order) || 'FALSE';
     const argument1 = javascriptGenerator.valueToCode(block, 'B', order) || 'FALSE';
     const code = `${argument0} ${operator} ${argument1}`;
@@ -219,31 +239,38 @@ javascriptGenerator.forBlock['sql_logic_operator'] = function(block: Blockly.Blo
 };
 
 javascriptGenerator.forBlock['sql_star'] = function(block: Blockly.Block) {
-    return ['*', javascriptGenerator.ORDER_ATOMIC];
+    return ['*', Order.ATOMIC];
 };
 
 javascriptGenerator.forBlock['sql_aggregate_function'] = function(block: Blockly.Block) {
     const aggregate = block.getFieldValue('AGGREGATE');
-    const column = javascriptGenerator.valueToCode(block, 'COLUMN', javascriptGenerator.ORDER_ATOMIC) || 'column';
+    const column = javascriptGenerator.valueToCode(block, 'COLUMN', Order.ATOMIC) || 'column';
     const code = `${aggregate}(${column})`;
-    return [code, javascriptGenerator.ORDER_FUNCTION_CALL];
+    return [code, Order.FUNCTION_CALL];
 };
 
 javascriptGenerator.forBlock['sql_order_by_direction'] = function(block: Blockly.Block) {
-    const column = javascriptGenerator.valueToCode(block, 'COLUMN', javascriptGenerator.ORDER_ATOMIC) || 'column';
+    const column = javascriptGenerator.valueToCode(block, 'COLUMN', Order.ATOMIC) || 'column';
     const direction = block.getFieldValue('DIRECTION');
     const code = `${column} ${direction}`;
-    return [code, javascriptGenerator.ORDER_ATOMIC];
+    return [code, Order.ATOMIC];
 };
 
 javascriptGenerator.forBlock['sql_orderby'] = function(block: Blockly.Block) {
-    const value = javascriptGenerator.valueToCode(block, 'ORDER_BY_VALUE', javascriptGenerator.ORDER_ATOMIC) || 'column';
+    const value = javascriptGenerator.valueToCode(block, 'ORDER_BY_VALUE', Order.ATOMIC) || 'column';
     return ` ORDER BY ${value}`;
 };
 
 javascriptGenerator.forBlock['sql_limit'] = function(block: Blockly.Block) {
-    const limit = javascriptGenerator.valueToCode(block, 'LIMIT', javascriptGenerator.ORDER_ATOMIC) || '10';
+    const limit = javascriptGenerator.valueToCode(block, 'LIMIT', Order.ATOMIC) || '10';
     return ` LIMIT ${limit}`;
+};
+
+javascriptGenerator.forBlock['sql_column_list'] = function(block: Blockly.Block) {
+  const col1 = javascriptGenerator.valueToCode(block, 'COLUMN1', Order.NONE) || '';
+  const col2 = javascriptGenerator.valueToCode(block, 'COLUMN2', Order.NONE) || '';
+  const code = [col1, col2].filter(c => c).join(', ');
+  return [code, Order.ATOMIC];
 };
 
 
@@ -282,6 +309,10 @@ const toolbox = {
     {
         kind: 'block',
         type: 'sql_order_by_direction'
+    },
+    {
+        kind: 'block',
+        type: 'sql_column_list'
     },
     {
         kind: 'block',
@@ -387,7 +418,7 @@ export function BlocklyEditor({ onChange }: Props) {
               colour: '#4a5568',
               snap: true,
             },
-            theme: Blockly.Themes.Dark
+            theme: DarkTheme
           }}
           onWorkspaceChange={workspaceDidChange}
           onInject={handleWorkspaceInjected}

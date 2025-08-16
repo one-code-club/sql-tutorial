@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@blockly/theme-dark": "^8.0.1",
     "blockly": "^12.2.0",
     "clsx": "^2.1.1",
     "duckdb": "^1.0.0",

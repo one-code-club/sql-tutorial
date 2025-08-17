@@ -7,7 +7,7 @@ export function Header() {
   const { nickname, resetAll } = useAppStore();
   return (
     <header className="flex items-center justify-between border-b border-slate-700/60 bg-slate-900/60 backdrop-blur px-4 py-3">
-      <Link href="/" className="text-lg font-bold text-slate-100">SQL Tutorial</Link>
+      <Link href="/" className="text-lg font-bold text-slate-100">CS in English: SQL Builder</Link>
       <div className="flex items-center gap-3">
         {nickname && <span className="text-sm text-slate-300">👤 {nickname}</span>}
         <button

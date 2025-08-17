@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
+import { useTranslation } from '@/lib/translations';
 
 type Props = {
   keywordBadges: string[];
@@ -11,7 +12,8 @@ type Props = {
 };
 
 export function LeftPane({ keywordBadges, columns, onSelectQuery, editorType }: Props) {
-  const { selectedDB, setSelectedDB, queries, setQueries, nickname } = useAppStore();
+  const { selectedDB, setSelectedDB, queries, setQueries, nickname, language } = useAppStore();
+  const t = useTranslation(language);
   const [files, setFiles] = useState<string[]>([]);
 
   useEffect(() => {
@@ -44,13 +46,13 @@ export function LeftPane({ keywordBadges, columns, onSelectQuery, editorType }: 
   return (
     <aside className="col-span-2 flex flex-col gap-3">
       <div className="rounded-md border border-slate-700 bg-slate-900 p-3">
-        <label className="mb-2 block text-sm font-medium text-slate-200">DBを選択</label>
+        <label className="mb-2 block text-sm font-medium text-slate-200">{t.selectDB}</label>
         <select
           value={selectedDB ?? ''}
           onChange={(e) => setSelectedDB(e.target.value)}
           className="w-full rounded-md border border-slate-700 bg-slate-800 px-2 py-2 text-slate-100"
         >
-          <option value="" disabled>選択してください</option>
+          <option value="" disabled>{t.selectPlaceholder}</option>
           {files.map((f) => (
             <option key={f} value={f}>{f}</option>
           ))}
@@ -61,7 +63,7 @@ export function LeftPane({ keywordBadges, columns, onSelectQuery, editorType }: 
               draggable
               onDragStart={(e) => handleDragStart(e, selectedDB, 'sql_table')}
               className="badge badge-db cursor-grab select-none"
-              title="ドラッグしてエディタに挿入"
+              title={t.dragToEditor}
             >
               {selectedDB}
             </span>
@@ -70,7 +72,7 @@ export function LeftPane({ keywordBadges, columns, onSelectQuery, editorType }: 
       </div>
 
       <div className="rounded-md border border-slate-700 bg-slate-900 p-3">
-        <div className="mb-2 text-sm font-medium text-slate-200">SQLキーワード</div>
+        <div className="mb-2 text-sm font-medium text-slate-200">{t.sqlKeywords}</div>
         <div className="flex flex-wrap gap-2">
           {keywordBadges.map((k) => (
             <span
@@ -86,7 +88,7 @@ export function LeftPane({ keywordBadges, columns, onSelectQuery, editorType }: 
       </div>
 
       <div className="rounded-md border border-slate-700 bg-slate-900 p-3">
-        <div className="mb-2 text-sm font-medium text-slate-200">カラム</div>
+        <div className="mb-2 text-sm font-medium text-slate-200">{t.columns}</div>
         <div className="flex flex-wrap gap-2">
           {columns.map((c) => (
             <span
@@ -102,21 +104,21 @@ export function LeftPane({ keywordBadges, columns, onSelectQuery, editorType }: 
       </div>
 
       <div className="rounded-md border border-slate-700 bg-slate-900 p-3">
-        <div className="mb-2 text-sm font-medium text-slate-200">保存済みクエリ</div>
+        <div className="mb-2 text-sm font-medium text-slate-200">{t.savedQueries}</div>
         <ul className="space-y-2 text-slate-100">
           {queries.map((q) => (
             <li key={q.id} className="flex items-center justify-between gap-2">
               <button
                 className="truncate text-sm text-brand-400 hover:underline text-left"
                 onClick={() => onSelectQuery(q.text)}
-                title="クリックでエディタに読み込み"
+                title={t.clickToLoad}
               >
                 {q.name}
               </button>
               <button
                 onClick={() => handleDelete(q.id)}
                 className="rounded-md border border-slate-700 bg-slate-800 px-2 py-1 text-xs text-slate-100 hover:bg-slate-700"
-              >削除</button>
+              >{t.delete}</button>
             </li>
           ))}
         </ul>

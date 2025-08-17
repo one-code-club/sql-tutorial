@@ -1,3 +1,8 @@
+"use client";
+
+import { useAppStore } from '@/store/useAppStore';
+import { useTranslation } from '@/lib/translations';
+
 type Props = {
   rows: any[];
   loading?: boolean;
@@ -5,13 +10,16 @@ type Props = {
 };
 
 export function ResultGrid({ rows, loading, error }: Props) {
+  const { language } = useAppStore();
+  const t = useTranslation(language);
+  
   if (error) return (
     <div className="rounded-md border border-red-700/50 bg-red-900/30 p-3 text-red-200">
-      ⚠ エラー: {error}
+      ⚠ {t.error}: {error}
     </div>
   );
-  if (loading) return <div className="rounded-md border border-slate-700 bg-slate-800 p-3 text-slate-200">実行中…</div>;
-  if (!rows?.length) return <div className="rounded-md border border-slate-700 bg-slate-800 p-3 text-slate-300">結果がここに表示されます</div>;
+  if (loading) return <div className="rounded-md border border-slate-700 bg-slate-800 p-3 text-slate-200">{t.executing}</div>;
+  if (!rows?.length) return <div className="rounded-md border border-slate-700 bg-slate-800 p-3 text-slate-300">{t.noResults}</div>;
 
   const columns = Object.keys(rows[0] ?? {});
   return (

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
+import { useTranslation } from '@/lib/translations';
 
 type Props = {
   open: boolean;
@@ -10,7 +11,8 @@ type Props = {
 };
 
 export function QuerySaveModal({ open, onOpenChange, sql }: Props) {
-  const { nickname, setQueries } = useAppStore();
+  const { nickname, setQueries, language } = useAppStore();
+  const t = useTranslation(language);
   const [name, setName] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -37,23 +39,23 @@ export function QuerySaveModal({ open, onOpenChange, sql }: Props) {
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4">
       <div className="w-full max-w-sm rounded-md bg-white p-4 shadow text-black">
-        <h2 className="mb-3 text-lg font-bold">クエリを保存</h2>
+        <h2 className="mb-3 text-lg font-bold">{t.saveQuery}</h2>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="クエリ名"
+          placeholder={t.queryName}
           className="mb-3 w-full rounded-md border px-3 py-2 text-black placeholder:text-slate-400"
         />
         <div className="flex justify-end gap-2">
           <button
             className="rounded-md border px-3 py-2 hover:bg-slate-50"
             onClick={() => onOpenChange(false)}
-          >キャンセル</button>
+          >{t.cancel}</button>
           <button
             className="rounded-md bg-brand-500 px-3 py-2 text-white hover:bg-brand-600 disabled:opacity-60"
             onClick={handleSave}
             disabled={!name || saving}
-          >保存</button>
+          >{t.save}</button>
         </div>
       </div>
     </div>

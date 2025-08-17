@@ -8,6 +8,7 @@ import { SQLEditor } from '@/components/SQLEditor';
 import { ResultGrid } from '@/components/ResultGrid';
 import { QuerySaveModal } from '@/components/QuerySaveModal';
 import { useAppStore } from '@/store/useAppStore';
+import { useTranslation } from '@/lib/translations';
 
 type EditorType = 'block' | 'text';
 
@@ -20,8 +21,10 @@ export default function EditorPage() {
     setColumns,
     queries,
     setQueries,
+    language,
   } = useAppStore();
 
+  const t = useTranslation(language);
   const [sql, setSql] = useState<string>('');
   const [editorType, setEditorType] = useState<EditorType>('block');
   const [showSave, setShowSave] = useState(false);
@@ -65,6 +68,7 @@ export default function EditorPage() {
     fetchQueries();
   }, [nickname, setQueries]);
 
+  // SQLキーワードは英語のみ
   const keywordBadges = useMemo(
     () => ['SELECT', 'DISTINCT', '*', 'FROM', 'WHERE', 'AND', 'OR', 'MIN', 'MAX', 'LIMIT', 'ORDER BY', 'ASC', 'DESC'],
     []
@@ -83,7 +87,7 @@ export default function EditorPage() {
       const data = await res.json();
       if (!res.ok) {
         setResult([]);
-        setError(String(data.error ?? 'SQLの実行に失敗しました。内容を確認してください。'));
+        setError(String(data.error ?? t.sqlExecutionError));
       } else {
         setError(null);
         setResult(data.rows ?? []);
@@ -97,7 +101,7 @@ export default function EditorPage() {
     <div className="flex min-h-dvh flex-col bg-transparent text-slate-100">
       <Header />
       <div className="grid flex-1 grid-cols-12 gap-3 p-3">
-      <LeftPane
+        <LeftPane
           keywordBadges={keywordBadges}
           columns={columns}
           onSelectQuery={setSql}
@@ -107,20 +111,20 @@ export default function EditorPage() {
         <div className="col-span-6 flex flex-col gap-3">
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-200">
-              「ブロックエディタ」か「テキストエディタ」のどちらかを選んでください
+              {t.editorTypeLabel}
             </label>
             <div className="flex items-center gap-2 rounded-md border border-slate-700 bg-slate-900 p-1 w-fit">
               <button
                 onClick={() => handleEditorTypeChange('block')}
                 className={`px-3 py-1 text-sm rounded-md ${editorType === 'block' ? 'bg-slate-700 text-white' : 'text-slate-400'}`}
               >
-                ブロックエディタ
+                {t.blockEditor}
               </button>
               <button
                 onClick={() => handleEditorTypeChange('text')}
                 className={`px-3 py-1 text-sm rounded-md ${editorType === 'text' ? 'bg-slate-700 text-white' : 'text-slate-400'}`}
               >
-                テキストエディタ
+                {t.textEditor}
               </button>
             </div>
           </div>
@@ -136,13 +140,13 @@ export default function EditorPage() {
               onClick={handleRun}
               className="rounded-md bg-brand-500 px-4 py-2 text-white shadow-lg shadow-brand-500/30 hover:bg-brand-400 hover:shadow-brand-400/40 transition"
             >
-              実行
+              {t.run}
             </button>
             <button
               onClick={() => setShowSave(true)}
               className="rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-slate-100 hover:bg-slate-700"
             >
-              保存
+              {t.save}
             </button>
           </div>
         </div>

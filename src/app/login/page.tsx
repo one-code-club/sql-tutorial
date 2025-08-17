@@ -14,7 +14,7 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     if (!nickname.trim()) {
-      setError('ニックネームを入力してください');
+      setError('Please enter a nickname');
       return;
     }
     setLoading(true);
@@ -26,12 +26,12 @@ export default function LoginPage() {
       });
       const data = await res.json();
       if (data.exists) {
-        setError('その名前はすでに使われています。別の名前を入力してください。');
+        setError('This name is already taken. Please choose a different name.');
       } else {
         router.push('/editor');
       }
     } catch (err) {
-      setError('エラーが発生しました。時間を置いて再度お試しください。');
+      setError('An error occurred. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -39,13 +39,13 @@ export default function LoginPage() {
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center p-6">
-      <h1 className="mb-6 text-2xl font-bold">ニックネームを入力</h1>
+      <h1 className="mb-6 text-2xl font-bold">Enter Your Nickname</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
-          placeholder="例: sakura"
+          placeholder="e.g. sakura"
           className="w-full rounded-md border px-3 py-2 text-black"
         />
         {error && <p className="text-sm text-red-600">{error}</p>}
@@ -54,7 +54,7 @@ export default function LoginPage() {
           disabled={loading}
           className="w-full rounded-md bg-brand-500 px-4 py-2 font-medium text-white hover:bg-brand-600 disabled:opacity-60"
         >
-          {loading ? '確認中…' : 'はじめる'}
+          {loading ? 'Checking...' : 'Get Started'}
         </button>
       </form>
     </main>

@@ -40,6 +40,10 @@ export const translations = {
     
     // Error messages
     sqlExecutionError: 'SQL execution failed. Please check the content.',
+    
+    // Blockly Editor
+    blocklyEditorLabel: 'SQL Block Editor',
+    queryDisplayLabel: 'Generated Query',
   },
   ja: {
     // Header
@@ -80,6 +84,10 @@ export const translations = {
     
     // Error messages
     sqlExecutionError: 'SQLの実行に失敗しました。内容を確認してください。',
+    
+    // Blockly Editor
+    blocklyEditorLabel: 'SQLブロックエディタ',
+    queryDisplayLabel: '実行するクエリ文',
   },
 } as const;
 

@@ -6,6 +6,8 @@ import * as Blockly from 'blockly/core';
 import DarkTheme from '@blockly/theme-dark';
 import { javascriptGenerator, Order } from 'blockly/javascript';
 import 'blockly/blocks';
+import { useAppStore } from '@/store/useAppStore';
+import { useTranslation } from '@/lib/translations';
 
 // カスタムブロックの定義
 Blockly.defineBlocksWithJsonArray([
@@ -347,6 +349,9 @@ type Props = {
 export function BlocklyEditor({ onChange }: Props) {
   const [sql, setSql] = useState('');
   const [workspace, setWorkspace] = useState<Blockly.WorkspaceSvg | null>(null);
+  
+  const language = useAppStore((state) => state.language);
+  const t = useTranslation(language);
 
   function workspaceDidChange(workspace: Blockly.WorkspaceSvg) {
     if (!workspace) return;
@@ -400,7 +405,7 @@ export function BlocklyEditor({ onChange }: Props) {
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-medium text-slate-200">SQLブロックエディタ</label>
+      <label className="text-sm font-medium text-slate-200">{t.blocklyEditorLabel}</label>
       <div 
         style={{ height: '400px', width: '100%' }} 
         className="rounded-md border border-slate-700 bg-slate-900 p-3"
@@ -425,7 +430,7 @@ export function BlocklyEditor({ onChange }: Props) {
         />
       </div>
       {/* 生成されたSQLを表示するエリア（デバッグ用） */}
-      <label className="text-sm font-medium text-slate-200">実行するクエリ文</label>
+      <label className="text-sm font-medium text-slate-200">{t.queryDisplayLabel}</label>
       <textarea
         value={sql}
         readOnly

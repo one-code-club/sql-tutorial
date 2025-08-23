@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
 import { executeSql } from '@/lib/sqlExecutor';
+import { resolveCsvPath } from '@/lib/csvLoader';
 
 function convertBigIntToString(obj: any): any {
   if (obj === null || obj === undefined) {
@@ -34,6 +35,14 @@ export async function POST(req: Request) {
   }
   if (!sql.trim()) {
     return NextResponse.json({ error: 'SQLを入力してください。例: SELECT * FROM ...' }, { status: 400 });
+  }
+  if (sql.length > 10000) {
+    return NextResponse.json({ error: 'SQLが長すぎます（上限10,000文字）' }, { status: 400 });
+  }
+  try {
+    resolveCsvPath(dbName);
+  } catch {
+    return NextResponse.json({ error: '不正なファイル名です' }, { status: 400 });
   }
 
   try {

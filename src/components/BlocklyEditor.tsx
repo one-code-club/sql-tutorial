@@ -126,13 +126,34 @@ Blockly.defineBlocksWithJsonArray([
             {
                 "type": "field_dropdown",
                 "name": "AGGREGATE",
-                "options": [ ["MIN", "MIN"], ["MAX", "MAX"] ]
+                "options": [ ["MIN", "MIN"], ["MAX", "MAX"], ["COUNT", "COUNT"] ]
             },
             { "type": "input_value", "name": "COLUMN" }
         ],
         "output": "String",
         "colour": 160,
         "tooltip": "Aggregate functions"
+    },
+    {
+        "type": "sql_groupby_item",
+        "message0": "%1",
+        "args0": [
+            { "type": "input_value", "name": "COLUMN" }
+        ],
+        "output": "String",
+        "colour": 290,
+        "tooltip": "Group by item"
+    },
+    {
+        "type": "sql_groupby",
+        "message0": "GROUP BY %1",
+        "args0": [
+            { "type": "input_value", "name": "GROUP_BY_VALUE" }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": 290,
+        "tooltip": "Group by clause"
     },
     {
         "type": "sql_order_by_direction",
@@ -251,6 +272,16 @@ javascriptGenerator.forBlock['sql_aggregate_function'] = function(block: Blockly
     return [code, Order.FUNCTION_CALL];
 };
 
+javascriptGenerator.forBlock['sql_groupby_item'] = function(block: Blockly.Block) {
+    const column = javascriptGenerator.valueToCode(block, 'COLUMN', Order.ATOMIC) || 'column';
+    return [column, Order.ATOMIC];
+};
+
+javascriptGenerator.forBlock['sql_groupby'] = function(block: Blockly.Block) {
+    const value = javascriptGenerator.valueToCode(block, 'GROUP_BY_VALUE', Order.ATOMIC) || 'column';
+    return ` GROUP BY ${value}`;
+};
+
 javascriptGenerator.forBlock['sql_order_by_direction'] = function(block: Blockly.Block) {
     const column = javascriptGenerator.valueToCode(block, 'COLUMN', Order.ATOMIC) || 'column';
     const direction = block.getFieldValue('DIRECTION');
@@ -318,7 +349,15 @@ const toolbox = {
     },
     {
         kind: 'block',
+        type: 'sql_groupby_item'
+    },
+    {
+        kind: 'block',
         type: 'sql_orderby'
+    },
+    {
+        kind: 'block',
+        type: 'sql_groupby'
     },
     {
         kind: 'block',
@@ -423,7 +462,8 @@ export function BlocklyEditor({ onChange }: Props) {
               colour: '#4a5568',
               snap: true,
             },
-            theme: DarkTheme
+            theme: DarkTheme,
+            sounds: false
           }}
           onWorkspaceChange={workspaceDidChange}
           onInject={handleWorkspaceInjected}

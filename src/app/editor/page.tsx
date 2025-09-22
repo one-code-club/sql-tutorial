@@ -70,7 +70,7 @@ export default function EditorPage() {
 
   // SQLキーワードは英語のみ
   const keywordBadges = useMemo(
-    () => ['SELECT', 'DISTINCT', '*', 'FROM', 'WHERE', 'AND', 'OR', 'MIN', 'MAX', 'LIMIT', 'ORDER BY', 'ASC', 'DESC'],
+    () => ['SELECT', 'DISTINCT', '*', 'FROM', 'WHERE', 'AND', 'OR', 'MIN', 'MAX', 'COUNT', 'GROUP BY', 'LIMIT', 'ORDER BY', 'ASC', 'DESC'],
     []
   );
 

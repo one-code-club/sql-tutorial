@@ -54,7 +54,7 @@ export default function EditorPage() {
 
   function getClientX(ev: MouseEvent | TouchEvent): number {
     // TouchEvent 優先
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // eslint-disable-next-line
     // @ts-ignore: Safari などで TouchEvent の型が曖昧なため安全に参照
     const touches = ev.touches as TouchList | undefined;
     if (touches && touches.length > 0) return touches[0].clientX;

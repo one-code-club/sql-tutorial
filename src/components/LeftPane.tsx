@@ -15,6 +15,7 @@ export function LeftPane({ keywordBadges, columns, onSelectQuery, editorType }: 
   const { selectedDB, setSelectedDB, queries, setQueries, nickname, language } = useAppStore();
   const t = useTranslation(language);
   const [files, setFiles] = useState<string[]>([]);
+  const [showKeywords, setShowKeywords] = useState(true);
 
   useEffect(() => {
     async function loadFiles() {
@@ -72,19 +73,38 @@ export function LeftPane({ keywordBadges, columns, onSelectQuery, editorType }: 
       </div>
 
       <div className="rounded-md border border-slate-700 bg-slate-900 p-3">
-        <div className="mb-2 text-sm font-medium text-slate-200">{t.sqlKeywords}</div>
-        <div className="flex flex-wrap gap-2">
-          {keywordBadges.map((k) => (
-            <span
-              key={k}
-              draggable
-              onDragStart={(e) => handleDragStart(e, k)}
-              className="badge badge-keyword cursor-grab select-none"
+        <div className="mb-2 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setShowKeywords((v) => !v)}
+            className="flex items-center gap-2 text-sm font-medium text-slate-200"
+            aria-expanded={showKeywords}
+            aria-controls="sql-keywords-panel"
+         >
+            <svg
+              viewBox="0 0 12 12"
+              className={`h-3 w-3 transform transition-transform ${showKeywords ? 'rotate-90' : ''}`}
+              aria-hidden="true"
             >
-              {k}
-            </span>
-          ))}
+              <path d="M4 2l4 4-4 4" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            {t.sqlKeywords}
+          </button>
         </div>
+        {showKeywords && (
+          <div id="sql-keywords-panel" className="flex flex-wrap gap-2">
+            {keywordBadges.map((k) => (
+              <span
+                key={k}
+                draggable
+                onDragStart={(e) => handleDragStart(e, k)}
+                className="badge badge-keyword cursor-grab select-none"
+              >
+                {k}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="rounded-md border border-slate-700 bg-slate-900 p-3">

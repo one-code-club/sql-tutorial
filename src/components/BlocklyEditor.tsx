@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { BlocklyWorkspace } from 'react-blockly';
 import * as Blockly from 'blockly/core';
 import DarkTheme from '@blockly/theme-dark';
@@ -126,7 +126,7 @@ Blockly.defineBlocksWithJsonArray([
             {
                 "type": "field_dropdown",
                 "name": "AGGREGATE",
-                "options": [ ["MIN", "MIN"], ["MAX", "MAX"], ["COUNT", "COUNT"] ]
+                "options": [ ["MIN", "MIN"], ["MAX", "MAX"], ["COUNT", "COUNT"], ["AVG", "AVG"], ["SUM", "SUM"] ]
             },
             { "type": "input_value", "name": "COLUMN" }
         ],
@@ -217,17 +217,30 @@ Blockly.defineBlocksWithJsonArray([
         "colour": 20,
         "inputsInline": true,
         "tooltip": "List of columns"
+    },
+    {
+        "type": "sql_alias",
+        "message0": "%1 AS %2",
+        "args0": [
+            { "type": "input_value", "name": "EXPR" },
+            { "type": "field_input", "name": "ALIAS", "text": "alias_name" }
+        ],
+        "inputsInline": true,
+        "output": "String",
+        "colour": 160,
+        "tooltip": "Alias expression (expr AS alias)"
     }
 ]);
 
 // カスタムブロックのSQLジェネレーター
 javascriptGenerator.forBlock['sql_select'] = function(block: Blockly.Block) {
-    const distinct = block.getFieldValue('DISTINCT') === 'TRUE' ? 'DISTINCT ' : '';
+    const isDistinct = block.getFieldValue('DISTINCT') === true || block.getFieldValue('DISTINCT') === 'TRUE';
     const columns = javascriptGenerator.valueToCode(block, 'COLUMNS', Order.ATOMIC) || '*';
     const table = javascriptGenerator.valueToCode(block, 'TABLE', Order.ATOMIC) || 'your_table';
     const where = javascriptGenerator.valueToCode(block, 'WHERE', Order.ATOMIC);
-    
-    let code = `SELECT ${distinct}${columns} FROM ${table}`;
+
+    const modifierText = isDistinct ? 'DISTINCT ' : '';
+    let code = `SELECT ${modifierText}${columns} FROM ${table}`;
     if (where) {
         code += ` WHERE ${where}`;
     }
@@ -264,6 +277,8 @@ javascriptGenerator.forBlock['sql_logic_operator'] = function(block: Blockly.Blo
 javascriptGenerator.forBlock['sql_star'] = function(block: Blockly.Block) {
     return ['*', Order.ATOMIC];
 };
+
+// sql_distinct ブロックは廃止（SELECT のチェックボックスで表現）
 
 javascriptGenerator.forBlock['sql_aggregate_function'] = function(block: Blockly.Block) {
     const aggregate = block.getFieldValue('AGGREGATE');
@@ -306,91 +321,106 @@ javascriptGenerator.forBlock['sql_column_list'] = function(block: Blockly.Block)
   return [code, Order.ATOMIC];
 };
 
-
-// SQL用のカスタムツールボックスを定義
-const toolbox = {
-  kind: 'flyoutToolbox',
-  contents: [
-    {
-      kind: 'block',
-      type: 'sql_select'
-    },
-    {
-      kind: 'block',
-      type: 'sql_table'
-    },
-    {
-      kind: 'block',
-      type: 'sql_column'
-    },
-    {
-      kind: 'block',
-      type: 'sql_compare'
-    },
-    {
-      kind: 'block',
-      type: 'sql_logic_operator'
-    },
-    {
-        kind: 'block',
-        type: 'sql_star'
-    },
-    {
-        kind: 'block',
-        type: 'sql_aggregate_function'
-    },
-    {
-        kind: 'block',
-        type: 'sql_order_by_direction'
-    },
-    {
-        kind: 'block',
-        type: 'sql_column_list'
-    },
-    {
-        kind: 'block',
-        type: 'sql_groupby_item'
-    },
-    {
-        kind: 'block',
-        type: 'sql_orderby'
-    },
-    {
-        kind: 'block',
-        type: 'sql_groupby'
-    },
-    {
-        kind: 'block',
-        type: 'sql_limit'
-    },
-    {
-      kind: 'block',
-      type: 'text'
-    },
-    {
-      kind: 'block',
-      type: 'math_number'
-    }
-  ]
+javascriptGenerator.forBlock['sql_alias'] = function(block: Blockly.Block) {
+    const expr = javascriptGenerator.valueToCode(block, 'EXPR', Order.NONE) || '';
+    const alias = block.getFieldValue('ALIAS') || '';
+    const safeAlias = String(alias).replace(/[^a-zA-Z0-9_]/g, '_');
+    const code = `${expr} AS ${safeAlias}`;
+    return [code, Order.ATOMIC];
 };
 
+
+// ルート: categoryToolbox（カテゴリ表示）
+// 翻訳 t に依存するため、ツールボックスはコンポーネント内で生成する
+
+// initialXml は空にし、ワークスペース注入後に手動で初期ブロックを配置する
 const initialXml = `
-<xml xmlns="https://developers.google.com/blockly/xml">
-  <block type="sql_select" x="10" y="10"></block>
-</xml>
+<xml xmlns="https://developers.google.com/blockly/xml"></xml>
 `;
 
 type Props = {
   value: string;
   onChange: (v: string) => void;
+  onRun?: () => void;
+  onSave?: () => void;
+  runLabel?: string;
+  saveLabel?: string;
 };
 
-export function BlocklyEditor({ onChange }: Props) {
+export function BlocklyEditor({ onChange, onRun, onSave, runLabel, saveLabel }: Props) {
   const [sql, setSql] = useState('');
   const [workspace, setWorkspace] = useState<Blockly.WorkspaceSvg | null>(null);
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string | null>(null);
   
   const language = useAppStore((state) => state.language);
   const t = useTranslation(language);
+
+  // ツールボックス（カテゴリ表示）
+  const toolbox = useMemo(() => {
+    return {
+      kind: 'categoryToolbox',
+      contents: [
+        {
+          kind: 'category',
+          name: t.categoryBasic,
+          contents: [
+            { kind: 'block', type: 'sql_select' },
+            { kind: 'block', type: 'sql_table' },
+            { kind: 'block', type: 'sql_column' },
+            { kind: 'block', type: 'sql_star' },
+            { kind: 'block', type: 'sql_alias' },
+            { kind: 'block', type: 'sql_column_list' },
+          ],
+        },
+        {
+          kind: 'category',
+          name: t.categoryFilter,
+          contents: [
+            { kind: 'block', type: 'sql_compare' },
+            { kind: 'block', type: 'sql_logic_operator' },
+            { kind: 'block', type: 'text' },
+            { kind: 'block', type: 'math_number' },
+          ],
+        },
+        {
+          kind: 'category',
+          name: t.categoryAggregate,
+          contents: [
+            { kind: 'block', type: 'sql_aggregate_function' },
+            { kind: 'block', type: 'sql_groupby' },
+            { kind: 'block', type: 'sql_groupby_item' },
+          ],
+        },
+        {
+          kind: 'category',
+          name: t.categorySort,
+          contents: [
+            { kind: 'block', type: 'sql_orderby' },
+            { kind: 'block', type: 'sql_order_by_direction' },
+          ],
+        },
+        {
+          kind: 'category',
+          name: t.categoryLimit,
+          contents: [
+            { kind: 'block', type: 'sql_limit' },
+          ],
+        },
+      ],
+    } as any;
+  }, [t]);
+
+  // ワークスペース設定はオブジェクト参照が変わると再注入されるため、useMemoで固定
+  const workspaceConfiguration = useMemo(() => ({
+    grid: {
+      spacing: 20,
+      length: 3,
+      colour: '#4a5568',
+      snap: true,
+    },
+    theme: DarkTheme,
+    sounds: false,
+  }) as any, []);
 
   function workspaceDidChange(workspace: Blockly.WorkspaceSvg) {
     if (!workspace) return;
@@ -398,6 +428,26 @@ export function BlocklyEditor({ onChange }: Props) {
         const code = javascriptGenerator.workspaceToCode(workspace);
         setSql(code);
         onChange(code);
+        // フライアウトが閉じた場合は、選択カテゴリを復元
+        try {
+          const toolboxApi: any = (workspace as any).getToolbox?.();
+          const selected = toolboxApi?.getSelectedItem?.();
+          if (!selected && toolboxApi) {
+            requestAnimationFrame(() => {
+              try {
+                const items: any[] = toolboxApi.getToolboxItems?.() ?? [];
+                const target = (selectedCategoryName
+                  ? items.find((it: any) => it?.getName?.() === selectedCategoryName)
+                  : null) ?? items[0];
+                if (target && toolboxApi.setSelectedItem) toolboxApi.setSelectedItem(target);
+              } catch (err) {
+                // noop
+              }
+            });
+          }
+        } catch (_) {
+          // noop
+        }
     } catch (e) {
         console.error(e);
     }
@@ -405,10 +455,52 @@ export function BlocklyEditor({ onChange }: Props) {
 
   function handleWorkspaceInjected(ws: Blockly.WorkspaceSvg) {
     setWorkspace(ws);
-    // 初期ロード時にもコード生成を実行する
+
+    // 初期ロード時のコード生成（空のワークスペース）
     const code = javascriptGenerator.workspaceToCode(ws);
     setSql(code);
     onChange(code);
+
+    // 初回表示時に「基本」カテゴリを選択
+    try {
+      const toolboxApi: any = (ws as any).getToolbox?.();
+      if (toolboxApi) {
+        const items: any[] = toolboxApi.getToolboxItems?.() ?? [];
+        const target = items.find((it: any) => it?.getName?.() === t.categoryBasic) ?? items[0];
+        if (target && toolboxApi.setSelectedItem) {
+          toolboxApi.setSelectedItem(target);
+          setSelectedCategoryName(target?.getName?.() ?? null);
+        }
+
+        // カテゴリ選択変更を監視
+        const originalSetSelectedItem = toolboxApi.setSelectedItem;
+        toolboxApi.setSelectedItem = function(item: any) {
+          try {
+            setSelectedCategoryName(item?.getName?.() ?? null);
+          } catch {}
+          return originalSetSelectedItem.call(this, item);
+        };
+      }
+    } catch (e) {
+      console.warn('Failed to select default toolbox category', e);
+    }
+
+    // ブロック配置完了後、スクロール位置を (0, 0) に設定
+    try {
+      requestAnimationFrame(() => {
+        try {
+          Blockly.svgResize(ws);
+          const pair: any = (ws as any).scrollbar;
+          if (pair?.set) {
+            pair.set(0, 0);
+          }
+        } catch (err) {
+          console.warn('Failed to set initial scroll position', err);
+        }
+      });
+    } catch (e) {
+      console.warn('Failed to schedule initial scroll position', e);
+    }
   }
 
   function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
@@ -428,14 +520,29 @@ export function BlocklyEditor({ onChange }: Props) {
         const fieldName = blockType === 'sql_table' ? 'TABLE_NAME' : 'COLUMN_NAME';
         newBlock.setFieldValue(value, fieldName);
         
-        // 座標計算
-        const workspaceRect = (workspace as any).svgGroup_.getBoundingClientRect();
-        const dropX = e.clientX - workspaceRect.left;
-        const dropY = e.clientY - workspaceRect.top;
-        
-        newBlock.moveBy(dropX, dropY);
+        // 画面座標 (clientX/Y) -> ワークスペース座標に変換して配置
+        const screen = new Blockly.utils.Coordinate(e.clientX, e.clientY);
+        const wsXY = Blockly.utils.svgMath.screenToWsCoordinates(workspace, screen);
+
         newBlock.initSvg();
         newBlock.render();
+        newBlock.moveTo(wsXY);
+
+        // ドロップ後に現在選択されているカテゴリを再選択してブロックリストを表示
+        setTimeout(() => {
+          try {
+            const toolboxApi: any = (workspace as any).getToolbox?.();
+            if (toolboxApi) {
+              const items: any[] = toolboxApi.getToolboxItems?.() ?? [];
+              const target = (selectedCategoryName
+                ? items.find((it: any) => it?.getName?.() === selectedCategoryName)
+                : null) ?? items[0];
+              if (target && toolboxApi.setSelectedItem) toolboxApi.setSelectedItem(target);
+            }
+          } catch (err) {
+            console.warn('Failed to restore category selection after drop', err);
+          }
+        }, 10);
       }
     } catch (err) {
       console.error("Failed to handle drop", err);
@@ -447,24 +554,35 @@ export function BlocklyEditor({ onChange }: Props) {
       <label className="text-sm font-medium text-slate-200">{t.blocklyEditorLabel}</label>
       <div 
         style={{ height: '400px', width: '100%' }} 
-        className="rounded-md border border-slate-700 bg-slate-900 p-3"
+        className={`relative rounded-md border border-slate-700 bg-slate-900 p-3 ${onRun || onSave ? 'pt-12' : ''}`}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
+        {(onRun || onSave) && (
+          <div className="pointer-events-none absolute right-3 top-3 z-10 flex items-center gap-2">
+            {onRun && (
+              <button
+                onClick={onRun}
+                className="pointer-events-auto rounded-md bg-brand-500 px-12 py-1.5 text-white shadow-lg shadow-brand-500/30 hover:bg-brand-400 hover:shadow-brand-400/40 transition text-sm"
+              >
+                {runLabel ?? t.run}
+              </button>
+            )}
+            {onSave && (
+              <button
+                onClick={onSave}
+                className="pointer-events-auto rounded-md border border-slate-700 bg-slate-800 px-3 py-1.5 text-slate-100 hover:bg-slate-700 text-sm"
+              >
+                {saveLabel ?? t.save}
+              </button>
+            )}
+          </div>
+        )}
         <BlocklyWorkspace
           toolboxConfiguration={toolbox}
           initialXml={initialXml}
           className="h-full w-full"
-          workspaceConfiguration={{
-            grid: {
-              spacing: 20,
-              length: 3,
-              colour: '#4a5568',
-              snap: true,
-            },
-            theme: DarkTheme,
-            sounds: false
-          }}
+          workspaceConfiguration={workspaceConfiguration}
           onWorkspaceChange={workspaceDidChange}
           onInject={handleWorkspaceInjected}
         />

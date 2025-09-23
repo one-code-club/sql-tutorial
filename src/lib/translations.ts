@@ -44,6 +44,14 @@ export const translations = {
     // Blockly Editor
     blocklyEditorLabel: 'SQL Block Editor',
     queryDisplayLabel: 'Generated Query',
+    // Blockly categories
+    categoryBasic: 'Basics',
+    categoryFilter: 'Filter',
+    categoryAggregate: 'Aggregate',
+    categorySort: 'Sort',
+    categoryLimit: 'Limit',
+    // Misc
+    dragToResize: 'Drag to resize',
   },
   ja: {
     // Header
@@ -88,6 +96,14 @@ export const translations = {
     // Blockly Editor
     blocklyEditorLabel: 'SQLブロックエディタ',
     queryDisplayLabel: '実行するクエリ文',
+    // Blockly categories
+    categoryBasic: '基本',
+    categoryFilter: '条件/フィルタ',
+    categoryAggregate: '集計',
+    categorySort: '並び替え',
+    categoryLimit: '件数制限',
+    // Misc
+    dragToResize: 'ドラッグでサイズ変更',
   },
 } as const;
 

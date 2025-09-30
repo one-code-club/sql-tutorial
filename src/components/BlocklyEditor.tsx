@@ -9,6 +9,9 @@ import 'blockly/blocks';
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/lib/translations';
 
+// Blockly.Xml は型定義上存在しないが、実行時には利用可能
+const BlocklyXml = (Blockly as any).Xml;
+
 // カスタムブロックの定義
 Blockly.defineBlocksWithJsonArray([
     {
@@ -434,8 +437,8 @@ export function BlocklyEditor({ value, onChange, onRun, onSave, runLabel, saveLa
         onChange(code);
         // 変更のたびにXMLを親に通知
         try {
-          const dom = Blockly.Xml.workspaceToDom(workspace);
-          const xmlText = Blockly.Xml.domToText(dom);
+          const dom = BlocklyXml.workspaceToDom(workspace);
+          const xmlText = BlocklyXml.domToText(dom);
           onWorkspaceXmlChange?.(xmlText);
         } catch (e) {
           // XML取得に失敗した場合はnullを通知
@@ -475,8 +478,8 @@ export function BlocklyEditor({ value, onChange, onRun, onSave, runLabel, saveLa
       if (!hasBlocks) {
         if (initialXml && initialXml.trim()) {
           try {
-            const dom = Blockly.Xml.textToDom(initialXml);
-            Blockly.Xml.domToWorkspace(dom, ws);
+            const dom = BlocklyXml.textToDom(initialXml);
+            BlocklyXml.domToWorkspace(dom, ws);
           } catch (e) {
             // XMLが不正でも処理継続
           }
@@ -492,8 +495,8 @@ export function BlocklyEditor({ value, onChange, onRun, onSave, runLabel, saveLa
     onChange(code);
     // 初期XMLも親へ通知
     try {
-      const dom = Blockly.Xml.workspaceToDom(ws);
-      const xmlText = Blockly.Xml.domToText(dom);
+      const dom = BlocklyXml.workspaceToDom(ws);
+      const xmlText = BlocklyXml.domToText(dom);
       onWorkspaceXmlChange?.(xmlText);
     } catch {}
 

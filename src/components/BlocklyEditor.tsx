@@ -345,9 +345,13 @@ type Props = {
   onSave?: () => void;
   runLabel?: string;
   saveLabel?: string;
+  // モード切替用：ワークスペースのXMLを受け取り初期配置に利用
+  initialXml?: string;
+  // モード切替用：ワークスペース変更時にXMLを親へ伝播
+  onWorkspaceXmlChange?: (xml: string | null) => void;
 };
 
-export function BlocklyEditor({ onChange, onRun, onSave, runLabel, saveLabel }: Props) {
+export function BlocklyEditor({ value, onChange, onRun, onSave, runLabel, saveLabel, initialXml, onWorkspaceXmlChange }: Props) {
   const [sql, setSql] = useState('');
   const [workspace, setWorkspace] = useState<Blockly.WorkspaceSvg | null>(null);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string | null>(null);
@@ -428,6 +432,15 @@ export function BlocklyEditor({ onChange, onRun, onSave, runLabel, saveLabel }: 
         const code = javascriptGenerator.workspaceToCode(workspace);
         setSql(code);
         onChange(code);
+        // 変更のたびにXMLを親に通知
+        try {
+          const dom = Blockly.Xml.workspaceToDom(workspace);
+          const xmlText = Blockly.Xml.domToText(dom);
+          onWorkspaceXmlChange?.(xmlText);
+        } catch (e) {
+          // XML取得に失敗した場合はnullを通知
+          onWorkspaceXmlChange?.(null);
+        }
         // フライアウトが閉じた場合は、選択カテゴリを復元
         try {
           const toolboxApi: any = (workspace as any).getToolbox?.();
@@ -456,10 +469,33 @@ export function BlocklyEditor({ onChange, onRun, onSave, runLabel, saveLabel }: 
   function handleWorkspaceInjected(ws: Blockly.WorkspaceSvg) {
     setWorkspace(ws);
 
-    // 初期ロード時のコード生成（空のワークスペース）
+    // 初期ロード：initialXml があれば適用。なければ SQL からブロックを可能な範囲で構築
+    try {
+      const hasBlocks = ws.getTopBlocks(false).length > 0;
+      if (!hasBlocks) {
+        if (initialXml && initialXml.trim()) {
+          try {
+            const dom = Blockly.Xml.textToDom(initialXml);
+            Blockly.Xml.domToWorkspace(dom, ws);
+          } catch (e) {
+            // XMLが不正でも処理継続
+          }
+        } else if (value && value.trim()) {
+          tryBuildWorkspaceFromSql(ws, value);
+        }
+      }
+    } catch {}
+
+    // 初期コード生成
     const code = javascriptGenerator.workspaceToCode(ws);
     setSql(code);
     onChange(code);
+    // 初期XMLも親へ通知
+    try {
+      const dom = Blockly.Xml.workspaceToDom(ws);
+      const xmlText = Blockly.Xml.domToText(dom);
+      onWorkspaceXmlChange?.(xmlText);
+    } catch {}
 
     // 初回表示時に「基本」カテゴリを選択
     try {
@@ -580,7 +616,7 @@ export function BlocklyEditor({ onChange, onRun, onSave, runLabel, saveLabel }: 
         )}
         <BlocklyWorkspace
           toolboxConfiguration={toolbox}
-          initialXml={initialXml}
+          initialXml={initialXml ?? initialXmlDefault}
           className="h-full w-full"
           workspaceConfiguration={workspaceConfiguration}
           onWorkspaceChange={workspaceDidChange}
@@ -597,6 +633,162 @@ export function BlocklyEditor({ onChange, onRun, onSave, runLabel, saveLabel }: 
       />
     </div>
   );
+}
+
+// デフォルトの空XML
+const initialXmlDefault = `
+<xml xmlns="https://developers.google.com/blockly/xml"></xml>
+`;
+
+// 簡易SQLパーサ：SELECT ... FROM ... [WHERE ...] [GROUP BY ...] [ORDER BY ...] [LIMIT ...]
+function tryBuildWorkspaceFromSql(ws: Blockly.WorkspaceSvg, sqlText: string) {
+  try {
+    const text = sqlText.replace(/\s+/g, ' ').trim();
+    const m = /^select\s+(distinct\s+)?(.+?)\s+from\s+([^\s]+)(?:\s+where\s+(.+?))?(?:\s+group\s+by\s+(.+?))?(?:\s+order\s+by\s+(.+?))?(?:\s+limit\s+(\d+))?$/i.exec(text);
+    if (!m) return;
+
+    const [, distinctPart, columnsPart, tablePart, wherePart, groupByPart, orderByPart, limitPart] = m;
+
+    const origin = new Blockly.utils.Coordinate(40, 40);
+    const selectBlock = ws.newBlock('sql_select');
+    selectBlock.initSvg();
+    selectBlock.render();
+    selectBlock.moveTo(origin);
+
+    // DISTINCT
+    if (distinctPart) {
+      try { (selectBlock as any).setFieldValue(true, 'DISTINCT'); } catch {}
+    }
+
+    // TABLE
+    const tableBlock = ws.newBlock('sql_table');
+    tableBlock.setFieldValue(safeIdent(tablePart), 'TABLE_NAME');
+    tableBlock.initSvg();
+    tableBlock.render();
+    connectValue(selectBlock, 'TABLE', tableBlock);
+
+    // COLUMNS
+    const cols = columnsPart.split(',').map((s) => s.trim());
+    if (cols.length === 1 && cols[0] === '*') {
+      const star = ws.newBlock('sql_star');
+      star.initSvg(); star.render();
+      connectValue(selectBlock, 'COLUMNS', star);
+    } else if (cols.length === 1) {
+      connectValue(selectBlock, 'COLUMNS', makeColumn(ws, cols[0]));
+    } else {
+      // 2個までサポート（カスタムブロック仕様に合わせる）
+      const list = ws.newBlock('sql_column_list');
+      list.initSvg(); list.render();
+      connectValueRaw(list, 'COLUMN1', makeColumn(ws, cols[0]));
+      if (cols[1]) connectValueRaw(list, 'COLUMN2', makeColumn(ws, cols[1]));
+      connectValue(selectBlock, 'COLUMNS', list);
+    }
+
+    let tail: Blockly.Block | null = selectBlock;
+
+    // WHERE（単純な A OP B のみ対応）
+    if (wherePart) {
+      const where = wherePart.trim();
+      const cm = /^(\S+)\s*(=|!=|>=|<=|>|<)\s*(.+)$/.exec(where);
+      if (cm) {
+        const [, left, op, right] = cm;
+        const cmp = ws.newBlock('sql_compare');
+        cmp.setFieldValue(op, 'OP');
+        cmp.initSvg(); cmp.render();
+        connectValueRaw(cmp, 'A', makeExpr(ws, left));
+        connectValueRaw(cmp, 'B', makeExpr(ws, right));
+        connectValue(selectBlock, 'WHERE', cmp);
+      }
+    }
+
+    // GROUP BY（最初の1要素のみ）
+    if (groupByPart) {
+      const gcols = groupByPart.split(',').map((s) => s.trim());
+      const gb = ws.newBlock('sql_groupby');
+      gb.initSvg(); gb.render();
+      connectValueRaw(gb, 'GROUP_BY_VALUE', makeColumn(ws, gcols[0]));
+      tail = connectNext(tail, gb);
+    }
+
+    // ORDER BY（形式: col [ASC|DESC]）
+    if (orderByPart) {
+      const om = /^(\S+)(?:\s+(ASC|DESC))?$/i.exec(orderByPart.trim());
+      const dir = (om?.[2] || 'ASC').toUpperCase();
+      const obDir = ws.newBlock('sql_order_by_direction');
+      obDir.setFieldValue(dir, 'DIRECTION');
+      obDir.initSvg(); obDir.render();
+      connectValueRaw(obDir, 'COLUMN', makeColumn(ws, om?.[1] || ''));
+
+      const ob = ws.newBlock('sql_orderby');
+      ob.initSvg(); ob.render();
+      connectValueRaw(ob, 'ORDER_BY_VALUE', obDir);
+      tail = connectNext(tail, ob);
+    }
+
+    // LIMIT
+    if (limitPart) {
+      const lb = ws.newBlock('sql_limit');
+      lb.initSvg(); lb.render();
+      // LIMIT の入力は Number チェックだが、ここでは text モックとして扱う
+      const num = ws.newBlock('math_number');
+      (num as any).setFieldValue(String(parseInt(limitPart, 10) || 10), 'NUM');
+      num.initSvg(); num.render();
+      connectValueRaw(lb, 'LIMIT', num);
+      tail = connectNext(tail, lb);
+    }
+
+    // レイアウト軽い整列
+    try { Blockly.svgResize(ws); } catch {}
+  } catch (e) {
+    // noop
+  }
+}
+
+function makeColumn(ws: Blockly.WorkspaceSvg, name: string): Blockly.Block {
+  const block = ws.newBlock('sql_column');
+  block.setFieldValue(safeIdent(name), 'COLUMN_NAME');
+  block.initSvg(); block.render();
+  return block;
+}
+
+function makeExpr(ws: Blockly.WorkspaceSvg, token: string): Blockly.Block {
+  const trimmed = token.trim();
+  // 数値
+  if (/^[-+]?\d+(?:\.\d+)?$/.test(trimmed)) {
+    const num = ws.newBlock('math_number');
+    (num as any).setFieldValue(trimmed, 'NUM');
+    num.initSvg(); num.render();
+    return num;
+  }
+  // 文字列リテラル（'..."... いずれか）
+  if ((trimmed.startsWith("'") && trimmed.endsWith("'")) || (trimmed.startsWith('"') && trimmed.endsWith('"'))) {
+    const txt = ws.newBlock('text');
+    (txt as any).setFieldValue(trimmed.slice(1, -1), 'TEXT');
+    txt.initSvg(); txt.render();
+    return txt;
+  }
+  // 列名
+  return makeColumn(ws, trimmed);
+}
+
+function safeIdent(v: string): string {
+  return String(v || '').replace(/^[`\"']|[`\"']$/g, '').trim();
+}
+
+function connectValue(target: Blockly.Block, inputName: string, child: Blockly.Block) {
+  const input = target.getInput(inputName);
+  input?.connection?.connect(child.outputConnection as any);
+}
+
+function connectValueRaw(parent: Blockly.Block, inputName: string, child: Blockly.Block) {
+  parent.getInput(inputName)?.connection?.connect((child.outputConnection as any));
+}
+
+function connectNext(tail: Blockly.Block | null, nextBlock: Blockly.Block): Blockly.Block {
+  if (tail && (tail as any).nextConnection) {
+    (tail as any).nextConnection.connect((nextBlock as any).previousConnection);
+  }
+  return nextBlock;
 }
 
 

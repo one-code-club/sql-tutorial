@@ -36,6 +36,10 @@ export default function EditorPage() {
   const [editorRatio, setEditorRatio] = useState<number>(0.6);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const isDraggingRef = useRef<boolean>(false);
+  // Blockly ワークスペースのXMLを保持して、モード切替時にブロック配置を復元する
+  const [blockXml, setBlockXml] = useState<string | null>(null);
+  // 前回のモードを保持（テキスト→ブロック切替時はSQLから再構築）
+  const prevEditorTypeRef = useRef<EditorType>('block');
 
   function clamp(value: number, min: number, max: number) {
     return Math.min(Math.max(value, min), max);
@@ -83,10 +87,14 @@ export default function EditorPage() {
 
   function handleEditorTypeChange(type: EditorType) {
     if (editorType !== type) {
-      setSql('');
+      // SQLを消さずにモードだけ切り替える（テキスト→ブロック時はSQLからブロック復元を試行）
       setEditorType(type);
     }
   }
+
+  useEffect(() => {
+    prevEditorTypeRef.current = editorType;
+  }, [editorType]);
 
   useEffect(() => {
     async function loadFiles() {
@@ -187,6 +195,9 @@ export default function EditorPage() {
             {editorType === 'block' ? (
               <BlocklyEditor
                 value={sql}
+                // 直前がテキストモードだった場合はXMLを使わず、現在のSQLからブロックを再構築
+                initialXml={prevEditorTypeRef.current === 'text' ? undefined : (blockXml ?? undefined)}
+                onWorkspaceXmlChange={setBlockXml}
                 onChange={setSql}
                 onRun={handleRun}
                 onSave={() => setShowSave(true)}

@@ -346,6 +346,8 @@ type Props = {
   onChange: (v: string) => void;
   onRun?: () => void;
   runLabel?: string;
+  initialXml?: string;
+  onWorkspaceXmlChange?: (xml: string | null) => void;
 };
 
 export function BlocklyEditor({ value, onChange, onRun, runLabel, initialXml, onWorkspaceXmlChange }: Props) {

@@ -1,0 +1,101 @@
+id,grade,country,prefecture,state,other_country,favorite_subject,device,activities,sleep_hours,favorite_fruit,game_type,favorite_animal,favorite_thing,future_dream
+1,Fourth,Japan,Tokyo,,,"Math",Tablet,2,8,Apple,Action,Dog,Sports,Engineer
+2,Fifth,Japan,Osaka,,,"Language",PC/Mac Computer,1,7,Strawberry,Puzzle,Cat,Drawing,Artist
+3,Third,USA,,California,,"Science",Tablet,3,9,Banana,Adventure,Dog,Sports,Engineer
+4,Sixth,Japan,Kanagawa,,,"Math",Mobile Phone,2,7,Mandarin orange,Sports,Rabbit,Music,Musician
+5,Eighth,USA,,New York,,"Language",Tablet,4,8,Apple,Simulation,Cat,Programming,Game Creator
+6,Second,Japan,Kyoto,,,"Art & Crafts",Tablet,1,9,Peach,Racing,Fish,Crafts,Artist
+7,Nineth,Philippines,,,Philippines,"Math",PC/Mac Computer,2,6,Watermelon,Action,Dog,Sports,Engineer
+8,Fourth,Japan,Fukuoka,,,"Science",Tablet,3,8,Melon,Puzzle,Hamster,Drawing,Scientist / Researcher
+9,Seventh,USA,,Texas,,"Math",Mobile Phone,4,7,Apple,Adventure,Cat,Programming,Programmer
+10,Third,Japan,Saitama,,,"Language",Tablet,1,9,Strawberry,Action,Dog,Music,Musician
+11,Fifth,Japan,Hyogo,,,"Science",Tablet,2,8,Peach,Simulation,Rabbit,Crafts,Artist
+12,Sixth,USA,,Florida,,"Math",PC/Mac Computer,3,6,Banana,Racing,Cat,Sports,Engineer
+13,Fifth,Japan,Aichi,,,"Math",Tablet,2,7,Apple,Adventure,Dog,Programming,Programmer
+14,Fourth,Japan,Tokyo,,,"Language",Mobile Phone,1,8,Mandarin orange,Puzzle,Cat,Drawing,Artist
+15,Eighth,Japan,Hokkaido,,,"Science",Tablet,3,7,Apple,Sports,Dog,Sports,Athlete
+16,Seventh,USA,,California,,"Math",Tablet,4,8,Banana,Action,Cat,Programming,Engineer
+17,Nineth,Malaysia,,,Malaysia,"Math",Tablet,2,8,Melon,Simulation,Dog,Drawing,Artist
+18,Third,Japan,Osaka,,,"Art & Crafts",Tablet,1,9,Peach,Puzzle,Rabbit,Crafts,Artist
+19,Fifth,Japan,Tokyo,,,"Science",PC/Mac Computer,2,7,Apple,Racing,Dog,Music,Musician
+20,Sixth,USA,,New York,,"Math",Mobile Phone,3,8,Strawberry,Adventure,Cat,Sports,Engineer
+21,Fourth,Japan,Kanagawa,,,"Language",Tablet,2,8,Melon,Sports,Dog,Drawing,Artist
+22,Seventh,Japan,Chiba,,,"Math",Tablet,3,7,Apple,Action,Rabbit,Programming,Engineer
+23,Second,Japan,Kyoto,,,"Science",Tablet,1,8,Mandarin orange,Puzzle,Cat,Music,Musician
+24,Eighth,USA,,Texas,,"Language",PC/Mac Computer,4,6,Apple,Adventure,Dog,Sports,Athlete
+25,Third,Japan,Osaka,,,"Math",Tablet,2,8,Peach,Simulation,Rabbit,Drawing,Artist
+26,Fourth,Japan,Tokyo,,,"Science",Mobile Phone,3,7,Apple,Action,Dog,Sports,Engineer
+27,Fifth,Japan,Kanagawa,,,"Language",Tablet,2,8,Strawberry,Puzzle,Cat,Drawing,Artist
+28,Eighth,USA,,California,,"Math",Tablet,3,7,Apple,Racing,Dog,Programming,Engineer
+29,Nineth,Philippines,,,Philippines,"Science",Tablet,1,8,Melon,Simulation,Cat,Music,Musician
+30,Fourth,Japan,Fukuoka,,,"Math",Tablet,2,8,Apple,Adventure,Dog,Crafts,Scientist / Researcher
+31,Fifth,Japan,Osaka,,,"Language",PC/Mac Computer,3,7,Peach,Puzzle,Cat,Drawing,Artist
+32,Sixth,USA,,Florida,,"Math",Tablet,2,8,Apple,Action,Dog,Sports,Engineer
+33,Eighth,Japan,Tokyo,,,"Science",Tablet,1,7,Strawberry,Adventure,Rabbit,Programming,Engineer
+34,Fourth,Japan,Kanagawa,,,"Math",Mobile Phone,2,8,Apple,Sports,Cat,Sports,Athlete
+35,Seventh,USA,,New York,,"Language",Tablet,3,8,Melon,Puzzle,Dog,Drawing,Artist
+36,Second,Japan,Kyoto,,,"Science",Tablet,1,9,Mandarin orange,Racing,Rabbit,Music,Musician
+37,Nineth,Malaysia,,,Malaysia,"Math",PC/Mac Computer,3,6,Apple,Simulation,Dog,Programming,Engineer
+38,Fourth,Japan,Osaka,,,"Art & Crafts",Tablet,2,8,Peach,Action,Cat,Crafts,Artist
+39,Fifth,Japan,Tokyo,,,"Science",Tablet,1,8,Apple,Puzzle,Dog,Drawing,Artist
+40,Eighth,USA,,California,,"Math",Tablet,2,7,Melon,Racing,Rabbit,Sports,Engineer
+41,Sixth,Japan,Kanagawa,,,"Language",Mobile Phone,3,8,Apple,Adventure,Cat,Drawing,Artist
+42,Seventh,Japan,Chiba,,,"Math",Tablet,2,7,Strawberry,Simulation,Dog,Programming,Programmer
+43,Fifth,Japan,Osaka,,,"Science",Tablet,3,8,Peach,Action,Cat,Crafts,Artist
+44,Fourth,Japan,Tokyo,,,"Math",PC/Mac Computer,2,7,Apple,Sports,Dog,Sports,Engineer
+45,Eighth,USA,,Florida,,"Language",Tablet,4,8,Melon,Puzzle,Cat,Drawing,Artist
+46,Second,Japan,Kyoto,,,"Science",Tablet,1,9,Apple,Racing,Dog,Music,Musician
+47,Nineth,Philippines,,,Philippines,"Math",Tablet,2,6,Peach,Action,Cat,Sports,Engineer
+48,Fourth,Japan,Osaka,,,"Art & Crafts",Tablet,1,8,Strawberry,Simulation,Dog,Crafts,Artist
+49,Sixth,Japan,Tokyo,,,"Science",Tablet,3,8,Apple,Adventure,Cat,Drawing,Scientist / Researcher
+50,Seventh,USA,,Texas,,"Math",Mobile Phone,2,7,Apple,Sports,Dog,Sports,Athlete
+51,Fifth,Japan,Kanagawa,,,"Language",Tablet,3,8,Strawberry,Puzzle,Cat,Drawing,Artist
+52,Eighth,USA,,New York,,"Math",Tablet,4,6,Apple,Simulation,Dog,Programming,Engineer
+53,Third,Japan,Osaka,,,"Science",Tablet,1,9,Mandarin orange,Adventure,Cat,Music,Musician
+54,Fourth,Japan,Tokyo,,,"Math",PC/Mac Computer,2,8,Peach,Puzzle,Dog,Drawing,Artist
+55,Eighth,Japan,Fukuoka,,,"Language",Tablet,3,7,Apple,Sports,Cat,Programming,Programmer
+56,Sixth,USA,,California,,"Math",Tablet,2,8,Melon,Racing,Dog,Sports,Engineer
+57,Seventh,Japan,Kyoto,,,"Science",Tablet,3,7,Apple,Adventure,Cat,Drawing,Artist
+58,Nineth,Malaysia,,,Malaysia,"Math",Tablet,1,8,Apple,Simulation,Dog,Programming,Engineer
+59,Fourth,Japan,Osaka,,,"Art & Crafts",Tablet,2,8,Peach,Puzzle,Cat,Crafts,Artist
+60,Fifth,Japan,Tokyo,,,"Science",PC/Mac Computer,3,7,Apple,Action,Dog,Drawing,Scientist / Researcher
+61,Sixth,USA,,Florida,,"Math",Tablet,2,8,Strawberry,Racing,Cat,Sports,Engineer
+62,Seventh,Japan,Kanagawa,,,"Language",Tablet,3,7,Apple,Adventure,Dog,Drawing,Artist
+63,Fifth,Japan,Osaka,,,"Science",Tablet,1,8,Melon,Puzzle,Cat,Music,Musician
+64,Eighth,USA,,Texas,,"Math",Mobile Phone,2,7,Apple,Simulation,Dog,Sports,Engineer
+65,Fourth,Japan,Tokyo,,,"Language",Tablet,3,8,Peach,Action,Cat,Drawing,Artist
+66,Nineth,Philippines,,,Philippines,"Math",Tablet,2,6,Apple,Adventure,Dog,Programming,Engineer
+67,Third,Japan,Osaka,,,"Science",Tablet,1,9,Apple,Puzzle,Cat,Music,Musician
+68,Fourth,Japan,Tokyo,,,"Math",PC/Mac Computer,2,8,Mandarin orange,Simulation,Dog,Drawing,Artist
+69,Sixth,USA,,California,,"Math",Tablet,3,7,Apple,Sports,Cat,Sports,Engineer
+70,Seventh,Japan,Kanagawa,,,"Language",Tablet,2,7,Peach,Puzzle,Dog,Drawing,Artist
+71,Fifth,Japan,Osaka,,,"Science",Tablet,1,8,Apple,Action,Cat,Crafts,Artist
+72,Eighth,USA,,New York,,"Math",Tablet,3,6,Apple,Adventure,Dog,Programming,Engineer
+73,Second,Japan,Kyoto,,,"Art & Crafts",Tablet,2,9,Melon,Puzzle,Rabbit,Drawing,Artist
+74,Fourth,Japan,Tokyo,,,"Science",Tablet,1,8,Apple,Sports,Cat,Sports,Scientist / Researcher
+75,Sixth,USA,,Florida,,"Math",Mobile Phone,3,8,Peach,Action,Dog,Drawing,Engineer
+76,Eighth,Japan,Osaka,,,"Language",Tablet,2,7,Apple,Puzzle,Cat,Drawing,Artist
+77,Fourth,Japan,Tokyo,,,"Science",Tablet,3,8,Apple,Adventure,Dog,Programming,Engineer
+78,Seventh,Japan,Kanagawa,,,"Math",Tablet,1,7,Melon,Simulation,Cat,Drawing,Artist
+79,Fifth,Japan,Osaka,,,"Science",Tablet,2,8,Apple,Action,Dog,Music,Musician
+80,Eighth,USA,,California,,"Math",Tablet,3,7,Peach,Racing,Cat,Sports,Engineer
+81,Nineth,Malaysia,,,Malaysia,"Math",PC/Mac Computer,2,8,Apple,Adventure,Dog,Drawing,Artist
+82,Fourth,Japan,Kyoto,,,"Language",Tablet,3,8,Apple,Puzzle,Cat,Drawing,Artist
+83,Fifth,Japan,Osaka,,,"Science",Tablet,2,7,Strawberry,Simulation,Dog,Music,Musician
+84,Sixth,USA,,Texas,,"Math",Tablet,4,6,Apple,Adventure,Cat,Programming,Engineer
+85,Eighth,Japan,Tokyo,,,"Science",Tablet,1,7,Melon,Action,Dog,Drawing,Scientist / Researcher
+86,Second,Japan,Kyoto,,,"Art & Crafts",Tablet,2,9,Apple,Puzzle,Rabbit,Crafts,Artist
+87,Fifth,Japan,Osaka,,,"Science",Tablet,3,8,Apple,Sports,Cat,Sports,Engineer
+88,Eighth,USA,,New York,,"Math",Mobile Phone,2,6,Peach,Simulation,Dog,Programming,Engineer
+89,Fourth,Japan,Tokyo,,,"Science",Tablet,1,8,Apple,Adventure,Cat,Drawing,Artist
+90,Sixth,Japan,Kanagawa,,,"Math",Tablet,2,7,Mandarin orange,Action,Dog,Sports,Engineer
+91,Seventh,Japan,Chiba,,,"Language",Tablet,3,7,Apple,Puzzle,Cat,Drawing,Artist
+92,Fifth,Japan,Osaka,,,"Science",Tablet,2,8,Apple,Simulation,Dog,Music,Musician
+93,Eighth,USA,,California,,"Math",Tablet,3,6,Melon,Adventure,Cat,Programming,Engineer
+94,Nineth,Philippines,,,Philippines,"Math",Tablet,1,7,Apple,Action,Dog,Drawing,Engineer
+95,Fourth,Japan,Tokyo,,,"Art & Crafts",Tablet,2,8,Peach,Puzzle,Cat,Crafts,Artist
+96,Fifth,Japan,Osaka,,,"Science",Tablet,3,7,Apple,Simulation,Dog,Music,Musician
+97,Sixth,USA,,Florida,,"Math",Tablet,2,8,Apple,Adventure,Cat,Sports,Engineer
+98,Seventh,Japan,Kanagawa,,,"Language",Tablet,3,7,Apple,Puzzle,Dog,Drawing,Artist
+99,Fourth,Japan,Tokyo,,,"Science",Tablet,2,8,Peach,Action,Cat,Sports,Engineer
+100,Fifth,Japan,Osaka,,,"Math",Tablet,3,7,Apple,Adventure,Dog,Drawing,Engineer

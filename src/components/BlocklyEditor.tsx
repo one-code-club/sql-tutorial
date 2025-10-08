@@ -345,16 +345,10 @@ type Props = {
   value: string;
   onChange: (v: string) => void;
   onRun?: () => void;
-  onSave?: () => void;
   runLabel?: string;
-  saveLabel?: string;
-  // モード切替用：ワークスペースのXMLを受け取り初期配置に利用
-  initialXml?: string;
-  // モード切替用：ワークスペース変更時にXMLを親へ伝播
-  onWorkspaceXmlChange?: (xml: string | null) => void;
 };
 
-export function BlocklyEditor({ value, onChange, onRun, onSave, runLabel, saveLabel, initialXml, onWorkspaceXmlChange }: Props) {
+export function BlocklyEditor({ value, onChange, onRun, runLabel, initialXml, onWorkspaceXmlChange }: Props) {
   const [sql, setSql] = useState('');
   const [workspace, setWorkspace] = useState<Blockly.WorkspaceSvg | null>(null);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string | null>(null);
@@ -593,11 +587,11 @@ export function BlocklyEditor({ value, onChange, onRun, onSave, runLabel, saveLa
       <label className="text-sm font-medium text-slate-200">{t.blocklyEditorLabel}</label>
       <div 
         style={{ height: '400px', width: '100%' }} 
-        className={`relative rounded-md border border-slate-700 bg-slate-900 p-3 ${onRun || onSave ? 'pt-12' : ''}`}
+        className={`relative rounded-md border border-slate-700 bg-slate-900 p-3 ${onRun ? 'pt-12' : ''}`}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
-        {(onRun || onSave) && (
+        {(onRun) && (
           <div className="pointer-events-none absolute right-3 top-3 z-10 flex items-center gap-2">
             {onRun && (
               <button
@@ -605,14 +599,6 @@ export function BlocklyEditor({ value, onChange, onRun, onSave, runLabel, saveLa
                 className="pointer-events-auto rounded-md bg-brand-500 px-12 py-1.5 text-white shadow-lg shadow-brand-500/30 hover:bg-brand-400 hover:shadow-brand-400/40 transition text-sm"
               >
                 {runLabel ?? t.run}
-              </button>
-            )}
-            {onSave && (
-              <button
-                onClick={onSave}
-                className="pointer-events-auto rounded-md border border-slate-700 bg-slate-800 px-3 py-1.5 text-slate-100 hover:bg-slate-700 text-sm"
-              >
-                {saveLabel ?? t.save}
               </button>
             )}
           </div>

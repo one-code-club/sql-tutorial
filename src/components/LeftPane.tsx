@@ -7,12 +7,11 @@ import { useTranslation } from '@/lib/translations';
 type Props = {
   keywordBadges: string[];
   columns: string[];
-  onSelectQuery: (text: string) => void;
   editorType: 'block' | 'text';
 };
 
-export function LeftPane({ keywordBadges, columns, onSelectQuery, editorType }: Props) {
-  const { selectedDB, setSelectedDB, queries, setQueries, nickname, language } = useAppStore();
+export function LeftPane({ keywordBadges, columns, editorType }: Props) {
+  const { selectedDB, setSelectedDB, language } = useAppStore();
   const t = useTranslation(language);
   const [files, setFiles] = useState<string[]>([]);
   const [showKeywords, setShowKeywords] = useState(true);
@@ -33,15 +32,6 @@ export function LeftPane({ keywordBadges, columns, onSelectQuery, editorType }: 
     } else {
         e.dataTransfer.setData('text/plain', text);
     }
-  }
-
-  async function handleDelete(id: string) {
-    await fetch(`/api/queries?id=${encodeURIComponent(id)}&nickname=${encodeURIComponent(nickname ?? '')}`, {
-      method: 'DELETE',
-    });
-    const res = await fetch(`/api/queries?nickname=${encodeURIComponent(nickname ?? '')}`);
-    const data = await res.json();
-    setQueries(data.queries ?? []);
   }
 
   return (
@@ -121,27 +111,6 @@ export function LeftPane({ keywordBadges, columns, onSelectQuery, editorType }: 
             </span>
           ))}
         </div>
-      </div>
-
-      <div className="rounded-md border border-slate-700 bg-slate-900 p-3">
-        <div className="mb-2 text-sm font-medium text-slate-200">{t.savedQueries}</div>
-        <ul className="space-y-2 text-slate-100">
-          {queries.map((q) => (
-            <li key={q.id} className="flex items-center justify-between gap-2">
-              <button
-                className="truncate text-sm text-brand-400 hover:underline text-left"
-                onClick={() => onSelectQuery(q.text)}
-                title={t.clickToLoad}
-              >
-                {q.name}
-              </button>
-              <button
-                onClick={() => handleDelete(q.id)}
-                className="rounded-md border border-slate-700 bg-slate-800 px-2 py-1 text-xs text-slate-100 hover:bg-slate-700"
-              >{t.delete}</button>
-            </li>
-          ))}
-        </ul>
       </div>
     </aside>
   );

@@ -6,7 +6,7 @@ import { LeftPane } from '@/components/LeftPane';
 import { BlocklyEditor } from '@/components/BlocklyEditor';
 import { SQLEditor } from '@/components/SQLEditor';
 import { ResultGrid } from '@/components/ResultGrid';
-import { QuerySaveModal } from '@/components/QuerySaveModal';
+// QuerySaveModalのインポートを削除
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/lib/translations';
 
@@ -19,15 +19,14 @@ export default function EditorPage() {
     setSelectedDB,
     columns,
     setColumns,
-    queries,
-    setQueries,
+    // queries, setQueriesを削除
     language,
   } = useAppStore();
 
   const t = useTranslation(language);
   const [sql, setSql] = useState<string>('');
   const [editorType, setEditorType] = useState<EditorType>('block');
-  const [showSave, setShowSave] = useState(false);
+  // showSave stateを削除
   const [result, setResult] = useState<any[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -115,15 +114,7 @@ export default function EditorPage() {
     loadColumns();
   }, [selectedDB, setColumns]);
 
-  useEffect(() => {
-    async function fetchQueries() {
-      if (!nickname) return;
-      const res = await fetch(`/api/queries?nickname=${encodeURIComponent(nickname)}`);
-      const data = await res.json();
-      setQueries(data.queries ?? []);
-    }
-    fetchQueries();
-  }, [nickname, setQueries]);
+  // クエリ取得のuseEffectを削除（118-126行目）
 
   // SQLキーワードは英語のみ
   const keywordBadges = useMemo(
@@ -161,7 +152,7 @@ export default function EditorPage() {
         <LeftPane
           keywordBadges={keywordBadges}
           columns={columns}
-          onSelectQuery={setSql}
+          // onSelectQueryを削除
           editorType={editorType}
         />
 
@@ -200,18 +191,16 @@ export default function EditorPage() {
                 onWorkspaceXmlChange={setBlockXml}
                 onChange={setSql}
                 onRun={handleRun}
-                onSave={() => setShowSave(true)}
+                // onSaveとsaveLabelを削除
                 runLabel={t.run}
-                saveLabel={t.save}
               />
             ) : (
               <SQLEditor
                 value={sql}
                 onChange={setSql}
                 onRun={handleRun}
-                onSave={() => setShowSave(true)}
+                // onSaveとsaveLabelを削除
                 runLabel={t.run}
-                saveLabel={t.save}
               />
             )}
           </div>
@@ -236,7 +225,7 @@ export default function EditorPage() {
         </div>
       </div>
 
-      <QuerySaveModal open={showSave} onOpenChange={setShowSave} sql={sql} />
+      {/* QuerySaveModalを削除 */}
     </div>
   );
 }

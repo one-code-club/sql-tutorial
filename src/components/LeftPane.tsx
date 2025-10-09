@@ -14,7 +14,7 @@ export function LeftPane({ keywordBadges, columns, editorType }: Props) {
   const { selectedDB, setSelectedDB, language } = useAppStore();
   const t = useTranslation(language);
   const [files, setFiles] = useState<string[]>([]);
-  const [showKeywords, setShowKeywords] = useState(true);
+  const [showKeywords, setShowKeywords] = useState(false);
 
   useEffect(() => {
     async function loadFiles() {

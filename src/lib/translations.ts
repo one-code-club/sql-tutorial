@@ -17,6 +17,8 @@ export const translations = {
     textEditor: 'Text Editor',
     run: 'Run',
     save: 'Save',
+    cleanup: 'Clean-up',
+    cleanupConfirm: 'Do you want to delete unconnected blocks?',
     
     // Left pane
     selectDB: 'Select DB',
@@ -69,6 +71,8 @@ export const translations = {
     textEditor: 'テキストエディタ',
     run: '実行',
     save: '保存',
+    cleanup: 'クリーンアップ',
+    cleanupConfirm: '余分なブロックを消してよいですか？',
     
     // Left pane
     selectDB: 'DBを選択',

@@ -542,6 +542,55 @@ export function BlocklyEditor({ value, onChange, onRun, runLabel, initialXml, on
     e.preventDefault();
   }
 
+  // 孤立したブロック（どれとも接続されていないブロック）を削除する
+  function handleCleanup() {
+    if (!workspace) return;
+    
+    // 確認ダイアログを表示
+    if (!window.confirm(t.cleanupConfirm)) {
+      return;
+    }
+    
+    // すべてのトップレベルブロックを取得
+    const topBlocks = workspace.getTopBlocks(false);
+    
+    // sql_select ブロックを探す（メインクエリ）
+    const mainQueryBlock = topBlocks.find(block => block.type === 'sql_select');
+    
+    // メインクエリブロックと接続されているすべてのブロックを収集
+    const connectedBlocks = new Set<Blockly.Block>();
+    if (mainQueryBlock) {
+      collectConnectedBlocks(mainQueryBlock, connectedBlocks);
+    }
+    
+    // 接続されていないブロックを削除
+    topBlocks.forEach(block => {
+      if (!connectedBlocks.has(block)) {
+        block.dispose(false);
+      }
+    });
+  }
+
+  // ブロックとそれに接続されているすべてのブロックを再帰的に収集
+  function collectConnectedBlocks(block: Blockly.Block, visited: Set<Blockly.Block>) {
+    if (visited.has(block)) return;
+    visited.add(block);
+    
+    // 入力接続されているブロックを収集
+    block.inputList.forEach(input => {
+      const connectedBlock = input.connection?.targetBlock();
+      if (connectedBlock) {
+        collectConnectedBlocks(connectedBlock, visited);
+      }
+    });
+    
+    // 次のブロックを収集（previousStatement/nextStatement接続）
+    const nextBlock = block.getNextBlock();
+    if (nextBlock) {
+      collectConnectedBlocks(nextBlock, visited);
+    }
+  }
+
   function handleDrop(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     if (!workspace) return;
@@ -615,7 +664,16 @@ export function BlocklyEditor({ value, onChange, onRun, runLabel, initialXml, on
         />
       </div>
       {/* 生成されたSQLを表示するエリア（デバッグ用） */}
-      <label className="text-sm font-medium text-slate-200">{t.queryDisplayLabel}</label>
+      <div className="flex items-center justify-between">
+        <label className="text-sm font-medium text-slate-200">{t.queryDisplayLabel}</label>
+        <button
+          onClick={handleCleanup}
+          className="rounded-md bg-slate-600 px-4 py-1.5 text-sm text-white hover:bg-slate-500 transition"
+          title={t.cleanup}
+        >
+          {t.cleanup}
+        </button>
+      </div>
       <textarea
         value={sql}
         readOnly

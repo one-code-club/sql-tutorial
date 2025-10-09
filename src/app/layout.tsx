@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'SQL Tutorial',
+  title: 'SQL Builder',
   description: 'Kids-friendly SQL learning app',
 };
 

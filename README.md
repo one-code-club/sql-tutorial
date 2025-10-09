@@ -1,4 +1,4 @@
-# SQL Tutorial (for CS in English)
+# SQL Builder (for CS in English)
 
 A web-based, interactive SQL learning platform built with Next.js and powered by DuckDB. This application allows users to execute SQL queries against CSV files directly in the browser, offering both a traditional text editor and a visual query builder using Blockly.
 

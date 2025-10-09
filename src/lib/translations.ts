@@ -9,7 +9,7 @@ export const translations = {
     uploadScreenshot: 'Upload a screen-shot',
     
     // Home page
-    homeTitle: 'SQL Tutorial',
+    homeTitle: 'SQL Builder',
     homeSubtitle: 'SQL learning app for elementary and middle school students',
     getStarted: 'Get Started',
     
@@ -65,7 +65,7 @@ export const translations = {
     uploadScreenshot: 'スクショをアップロード',
     
     // Home page
-    homeTitle: 'SQL Tutorial',
+    homeTitle: 'SQL Builder',
     homeSubtitle: '小中学生向けの SQL 学習アプリ',
     getStarted: 'はじめる',
     

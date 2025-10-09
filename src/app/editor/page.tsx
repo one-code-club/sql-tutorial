@@ -6,6 +6,7 @@ import { LeftPane } from '@/components/LeftPane';
 import { BlocklyEditor } from '@/components/BlocklyEditor';
 import { SQLEditor } from '@/components/SQLEditor';
 import { ResultGrid } from '@/components/ResultGrid';
+import { ScreenshotUploadModal } from '@/components/ScreenshotUploadModal';
 // QuerySaveModalのインポートを削除
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/lib/translations';
@@ -30,6 +31,7 @@ export default function EditorPage() {
   const [result, setResult] = useState<any[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   // エディタ領域と結果領域の横幅比率（Left:Right）。初期は 6:4 ≒ 0.6
   const [editorRatio, setEditorRatio] = useState<number>(0.6);
@@ -147,7 +149,7 @@ export default function EditorPage() {
 
   return (
     <div className="flex min-h-dvh flex-col bg-transparent text-slate-100">
-      <Header />
+      <Header onUploadClick={() => setShowUploadModal(true)} />
       <div className="grid flex-1 grid-cols-12 gap-3 p-3">
         <LeftPane
           keywordBadges={keywordBadges}
@@ -225,7 +227,11 @@ export default function EditorPage() {
         </div>
       </div>
 
-      {/* QuerySaveModalを削除 */}
+      {/* スクリーンショットアップロードモーダル */}
+      <ScreenshotUploadModal 
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+      />
     </div>
   );
 }

@@ -5,6 +5,8 @@ export const translations = {
     // Header
     appTitle: 'CS in English: SQL Builder',
     logout: 'Logout',
+    gallery: 'Gallery',
+    uploadScreenshot: 'Upload a screen-shot',
     
     // Home page
     homeTitle: 'SQL Tutorial',
@@ -59,6 +61,8 @@ export const translations = {
     // Header
     appTitle: 'CS in English: SQL Builder',
     logout: 'ログアウト',
+    gallery: 'ギャラリー',
+    uploadScreenshot: 'スクショをアップロード',
     
     // Home page
     homeTitle: 'SQL Tutorial',

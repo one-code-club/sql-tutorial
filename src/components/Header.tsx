@@ -4,13 +4,44 @@ import Link from 'next/link';
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/lib/translations';
 
-export function Header() {
+type HeaderProps = {
+  onUploadClick?: () => void;
+};
+
+export function Header({ onUploadClick }: HeaderProps = {} as HeaderProps) {
   const { nickname, language, setLanguage, resetAll } = useAppStore();
   const t = useTranslation(language);
   
   return (
     <header className="flex items-center justify-between border-b border-slate-700/60 bg-slate-900/60 backdrop-blur px-4 py-3">
-      <Link href="/" className="text-lg font-bold text-slate-100">{t.appTitle}</Link>
+      <div className="flex items-center gap-4">
+        <Link href="/" className="text-lg font-bold text-slate-100">{t.appTitle}</Link>
+        
+        {/* ギャラリーメニュー */}
+        {nickname && (
+          <>
+            <Link
+              href="/gallery"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-slate-300 hover:text-white transition flex items-center gap-1"
+            >
+              📸 {t.gallery}
+            </Link>
+            
+            {/* Upload a screen-shotボタン */}
+            {onUploadClick && (
+              <button
+                onClick={onUploadClick}
+                className="rounded-md bg-brand-500 px-3 py-1.5 text-sm text-white hover:bg-brand-400 transition shadow-lg shadow-brand-500/20"
+              >
+                {t.uploadScreenshot}
+              </button>
+            )}
+          </>
+        )}
+      </div>
+      
       <div className="flex items-center gap-3">
         {/* 言語切り替えトグル */}
         <div className="flex items-center gap-1 rounded-md border border-slate-700 bg-slate-800 p-1">

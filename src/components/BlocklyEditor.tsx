@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { BlocklyWorkspace } from 'react-blockly';
 import * as Blockly from 'blockly/core';
 import DarkTheme from '@blockly/theme-dark';
@@ -344,16 +344,20 @@ const initialXml = `
 type Props = {
   value: string;
   onChange: (v: string) => void;
-  onRun?: () => void;
-  runLabel?: string;
   initialXml?: string;
   onWorkspaceXmlChange?: (xml: string | null) => void;
+  onWorkspaceReady?: (workspace: Blockly.WorkspaceSvg) => void;
+  onRun?: () => void;
+  runLabel?: string;
+  onCleanup?: () => void;
+  cleanupLabel?: string;
 };
 
-export function BlocklyEditor({ value, onChange, onRun, runLabel, initialXml, onWorkspaceXmlChange }: Props) {
+export function BlocklyEditor({ value, onChange, initialXml, onWorkspaceXmlChange, onWorkspaceReady, onRun, runLabel, onCleanup, cleanupLabel }: Props) {
   const [sql, setSql] = useState('');
   const [workspace, setWorkspace] = useState<Blockly.WorkspaceSvg | null>(null);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   
   const language = useAppStore((state) => state.language);
   const t = useTranslation(language);
@@ -467,6 +471,7 @@ export function BlocklyEditor({ value, onChange, onRun, runLabel, initialXml, on
 
   function handleWorkspaceInjected(ws: Blockly.WorkspaceSvg) {
     setWorkspace(ws);
+    onWorkspaceReady?.(ws);
 
     // 初期ロード：initialXml があれば適用。なければ SQL からブロックを可能な範囲で構築
     try {
@@ -542,54 +547,23 @@ export function BlocklyEditor({ value, onChange, onRun, runLabel, initialXml, on
     e.preventDefault();
   }
 
-  // 孤立したブロック（どれとも接続されていないブロック）を削除する
-  function handleCleanup() {
+  useEffect(() => {
     if (!workspace) return;
-    
-    // 確認ダイアログを表示
-    if (!window.confirm(t.cleanupConfirm)) {
-      return;
-    }
-    
-    // すべてのトップレベルブロックを取得
-    const topBlocks = workspace.getTopBlocks(false);
-    
-    // sql_select ブロックを探す（メインクエリ）
-    const mainQueryBlock = topBlocks.find(block => block.type === 'sql_select');
-    
-    // メインクエリブロックと接続されているすべてのブロックを収集
-    const connectedBlocks = new Set<Blockly.Block>();
-    if (mainQueryBlock) {
-      collectConnectedBlocks(mainQueryBlock, connectedBlocks);
-    }
-    
-    // 接続されていないブロックを削除
-    topBlocks.forEach(block => {
-      if (!connectedBlocks.has(block)) {
-        block.dispose(false);
-      }
-    });
-  }
+    const el = containerRef.current;
+    if (!el) return;
 
-  // ブロックとそれに接続されているすべてのブロックを再帰的に収集
-  function collectConnectedBlocks(block: Blockly.Block, visited: Set<Blockly.Block>) {
-    if (visited.has(block)) return;
-    visited.add(block);
-    
-    // 入力接続されているブロックを収集
-    block.inputList.forEach(input => {
-      const connectedBlock = input.connection?.targetBlock();
-      if (connectedBlock) {
-        collectConnectedBlocks(connectedBlock, visited);
+    const observer = new ResizeObserver(() => {
+      try {
+        Blockly.svgResize(workspace);
+      } catch (err) {
+        console.warn('Failed to resize Blockly workspace on container resize', err);
       }
     });
-    
-    // 次のブロックを収集（previousStatement/nextStatement接続）
-    const nextBlock = block.getNextBlock();
-    if (nextBlock) {
-      collectConnectedBlocks(nextBlock, visited);
-    }
-  }
+
+    observer.observe(el);
+
+    return () => observer.disconnect();
+  }, [workspace]);
 
   function handleDrop(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
@@ -637,22 +611,29 @@ export function BlocklyEditor({ value, onChange, onRun, runLabel, initialXml, on
     <div className="flex flex-col gap-2">
       <label className="text-sm font-medium text-slate-200">{t.blocklyEditorLabel}</label>
       <div 
+        ref={containerRef}
         style={{ height: '400px', width: '100%' }} 
-        className={`relative rounded-md border border-slate-700 bg-slate-900 p-3 ${onRun ? 'pt-12' : ''}`}
+        className={`relative rounded-md border border-slate-700 bg-slate-900 p-3 ${onRun ? 'pt-16' : ''} ${onCleanup ? 'pb-16' : ''}`}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
-        {(onRun) && (
-          <div className="pointer-events-none absolute right-3 top-3 z-10 flex items-center gap-2">
-            {onRun && (
-              <button
-                onClick={onRun}
-                className="pointer-events-auto rounded-md bg-brand-500 px-12 py-1.5 text-white shadow-lg shadow-brand-500/30 hover:bg-brand-400 hover:shadow-brand-400/40 transition text-sm"
-              >
-                {runLabel ?? t.run}
-              </button>
-            )}
-          </div>
+        {onRun && (
+          <button
+            type="button"
+            onClick={onRun}
+            className="absolute right-3 top-3 rounded-md bg-brand-500 px-5 py-1.5 text-sm text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-400 hover:shadow-brand-400/40"
+          >
+            {runLabel ?? t.run}
+          </button>
+        )}
+        {onCleanup && (
+          <button
+            type="button"
+            onClick={onCleanup}
+            className="absolute right-3 bottom-3 rounded-md bg-slate-600 px-4 py-1.5 text-sm text-white transition hover:bg-slate-500"
+          >
+            {cleanupLabel ?? t.cleanup}
+          </button>
         )}
         <BlocklyWorkspace
           toolboxConfiguration={toolbox}
@@ -663,17 +644,8 @@ export function BlocklyEditor({ value, onChange, onRun, runLabel, initialXml, on
           onInject={handleWorkspaceInjected}
         />
       </div>
-      {/* 生成されたSQLを表示するエリア（デバッグ用） */}
-      <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-slate-200">{t.queryDisplayLabel}</label>
-        <button
-          onClick={handleCleanup}
-          className="rounded-md bg-slate-600 px-4 py-1.5 text-sm text-white hover:bg-slate-500 transition"
-          title={t.cleanup}
-        >
-          {t.cleanup}
-        </button>
-      </div>
+      {/* 生成されたSQLを表示するエリア */}
+      <label className="text-sm font-medium text-slate-200">{t.queryDisplayLabel}</label>
       <textarea
         value={sql}
         readOnly
@@ -682,6 +654,57 @@ export function BlocklyEditor({ value, onChange, onRun, runLabel, initialXml, on
       />
     </div>
   );
+}
+
+// Clean-up機能を外部から利用可能にする
+export function cleanupBlocklyWorkspace(workspace: Blockly.WorkspaceSvg | null, confirmMessage: string): boolean {
+  if (!workspace) return false;
+  
+  // 確認ダイアログを表示
+  if (!window.confirm(confirmMessage)) {
+    return false;
+  }
+  
+  // すべてのトップレベルブロックを取得
+  const topBlocks = workspace.getTopBlocks(false);
+  
+  // sql_select ブロックを探す（メインクエリ）
+  const mainQueryBlock = topBlocks.find(block => block.type === 'sql_select');
+  
+  // メインクエリブロックと接続されているすべてのブロックを収集
+  const connectedBlocks = new Set<Blockly.Block>();
+  if (mainQueryBlock) {
+    collectConnectedBlocksForCleanup(mainQueryBlock, connectedBlocks);
+  }
+  
+  // 接続されていないブロックを削除
+  topBlocks.forEach(block => {
+    if (!connectedBlocks.has(block)) {
+      block.dispose(false);
+    }
+  });
+  
+  return true;
+}
+
+// ブロックとそれに接続されているすべてのブロックを再帰的に収集
+function collectConnectedBlocksForCleanup(block: Blockly.Block, visited: Set<Blockly.Block>) {
+  if (visited.has(block)) return;
+  visited.add(block);
+  
+  // 入力接続されているブロックを収集
+  block.inputList.forEach(input => {
+    const connectedBlock = input.connection?.targetBlock();
+    if (connectedBlock) {
+      collectConnectedBlocksForCleanup(connectedBlock, visited);
+    }
+  });
+  
+  // 次のブロックを収集（previousStatement/nextStatement接続）
+  const nextBlock = block.getNextBlock();
+  if (nextBlock) {
+    collectConnectedBlocksForCleanup(nextBlock, visited);
+  }
 }
 
 // デフォルトの空XML

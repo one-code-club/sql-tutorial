@@ -6,9 +6,7 @@ type Props = {
   value: string;
   onChange: (v: string) => void;
   onRun?: () => void;
-  // onSaveを削除
   runLabel?: string;
-  // saveLabelを削除
 };
 
 export function SQLEditor({ value, onChange, onRun, runLabel = 'Run' }: Props) {
@@ -42,17 +40,13 @@ export function SQLEditor({ value, onChange, onRun, runLabel = 'Run' }: Props) {
         className={`w-full h-full rounded-md border border-slate-700 bg-slate-900 px-6 py-3 font-mono text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/40 ${onRun ? 'pt-12' : ''}`}
         spellCheck={false}
       />
-
       {onRun && (
-        <div className="pointer-events-none absolute right-2 top-2 z-10 flex items-center gap-2">
-          <button
-            onClick={onRun}
-            className="pointer-events-auto rounded-md bg-brand-500 px-12 py-1.5 text-white shadow-lg shadow-brand-500/30 hover:bg-brand-400 hover:shadow-brand-400/40 transition text-sm"
-          >
-            {runLabel}
-          </button>
-          {/* Saveボタンを削除 */}
-        </div>
+        <button
+          onClick={onRun}
+          className="absolute right-3 top-3 rounded-md bg-brand-500 px-5 py-1.5 text-sm text-white shadow-lg shadow-brand-500/30 transition hover:bg-brand-400 hover:shadow-brand-400/40"
+        >
+          {runLabel}
+        </button>
       )}
     </div>
   );

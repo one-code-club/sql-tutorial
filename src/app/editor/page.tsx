@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { WorkspaceSvg } from 'blockly/core';
 import { Header } from '@/components/Header';
 import { LeftPane } from '@/components/LeftPane';
-import { BlocklyEditor } from '@/components/BlocklyEditor';
+import { BlocklyEditor, cleanupBlocklyWorkspace } from '@/components/BlocklyEditor';
 import { SQLEditor } from '@/components/SQLEditor';
 import { ResultGrid } from '@/components/ResultGrid';
 import { ScreenshotUploadModal } from '@/components/ScreenshotUploadModal';
@@ -32,6 +33,7 @@ export default function EditorPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [blocklyWorkspace, setBlocklyWorkspace] = useState<WorkspaceSvg | null>(null);
 
   // エディタ領域と結果領域の横幅比率（Left:Right）。初期は 6:4 ≒ 0.6
   const [editorRatio, setEditorRatio] = useState<number>(0.6);
@@ -147,6 +149,10 @@ export default function EditorPage() {
     }
   }
 
+  function handleCleanup() {
+    cleanupBlocklyWorkspace(blocklyWorkspace, t.cleanupConfirm);
+  }
+
   return (
     <div className="flex min-h-dvh flex-col bg-transparent text-slate-100">
       <Header onUploadClick={() => setShowUploadModal(true)} />
@@ -188,20 +194,20 @@ export default function EditorPage() {
             {editorType === 'block' ? (
               <BlocklyEditor
                 value={sql}
-                // 直前がテキストモードだった場合はXMLを使わず、現在のSQLからブロックを再構築
                 initialXml={prevEditorTypeRef.current === 'text' ? undefined : (blockXml ?? undefined)}
                 onWorkspaceXmlChange={setBlockXml}
                 onChange={setSql}
+                onWorkspaceReady={(ws) => setBlocklyWorkspace(ws)}
                 onRun={handleRun}
-                // onSaveとsaveLabelを削除
                 runLabel={t.run}
+                onCleanup={handleCleanup}
+                cleanupLabel={t.cleanup}
               />
             ) : (
               <SQLEditor
                 value={sql}
                 onChange={setSql}
                 onRun={handleRun}
-                // onSaveとsaveLabelを削除
                 runLabel={t.run}
               />
             )}

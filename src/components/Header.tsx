@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 import { useTranslation } from '@/lib/translations';
 
@@ -9,8 +10,14 @@ type HeaderProps = {
 };
 
 export function Header({ onUploadClick }: HeaderProps = {} as HeaderProps) {
+  const router = useRouter();
   const { nickname, language, setLanguage, resetAll } = useAppStore();
   const t = useTranslation(language);
+  
+  const handleLogout = () => {
+    resetAll();
+    router.push('/login');
+  };
   
   return (
     <header className="flex items-center justify-between border-b border-slate-700/60 bg-slate-900/60 backdrop-blur px-4 py-3">
@@ -61,7 +68,7 @@ export function Header({ onUploadClick }: HeaderProps = {} as HeaderProps) {
         {nickname && <span className="text-sm text-slate-300">👤 {nickname}</span>}
         <button
           className="rounded-md border border-slate-700 bg-slate-800 px-3 py-1 text-sm text-slate-100 hover:bg-slate-700"
-          onClick={resetAll}
+          onClick={handleLogout}
         >
           {t.logout}
         </button>

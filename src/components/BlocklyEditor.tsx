@@ -657,12 +657,14 @@ export function BlocklyEditor({ value, onChange, initialXml, onWorkspaceXmlChang
 }
 
 // Clean-up機能を外部から利用可能にする
-export function cleanupBlocklyWorkspace(workspace: Blockly.WorkspaceSvg | null, confirmMessage: string): boolean {
+export function cleanupBlocklyWorkspace(workspace: Blockly.WorkspaceSvg | null, confirmMessage: string, skipConfirm?: boolean): boolean {
   if (!workspace) return false;
   
-  // 確認ダイアログを表示
-  if (!window.confirm(confirmMessage)) {
-    return false;
+  // 確認ダイアログを表示（skipConfirm が true のときはスキップ）
+  if (!skipConfirm) {
+    if (!window.confirm(confirmMessage)) {
+      return false;
+    }
   }
   
   // すべてのトップレベルブロックを取得

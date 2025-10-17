@@ -128,6 +128,8 @@ export default function EditorPage() {
 
   async function handleRun() {
     if (!selectedDB) return;
+    // Run 前に自動クリーンアップ（確認ダイアログはスキップ）
+    cleanupBlocklyWorkspace(blocklyWorkspace, t.cleanupConfirm, true);
     setLoading(true);
     setError(null);
     try {

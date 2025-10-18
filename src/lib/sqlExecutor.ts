@@ -47,7 +47,7 @@ async function loadCsvAsTable(conn: import('duckdb').Connection, fileName: strin
   });
   await new Promise<void>((resolve, reject) => {
     conn.run(
-      `CREATE TABLE ${table} AS SELECT * FROM read_csv_auto('${escapedFullPath}')`,
+      `CREATE TABLE ${table} AS SELECT * FROM read_csv_auto('${escapedFullPath}', HEADER=TRUE, DELIM=',', QUOTE='"')`,
       (err: Error | null) => (err ? reject(err) : resolve())
     );
   });

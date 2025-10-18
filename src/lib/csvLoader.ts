@@ -31,8 +31,8 @@ export async function readCsvColumns(fileName: string, dataDir = path.join(proce
       const buf = Buffer.alloc(64 * 1024);
       const { bytesRead } = await fh.read(buf, 0, buf.length, 0);
       const chunk = buf.slice(0, bytesRead).toString('utf-8');
-      const firstLine = chunk.split(/\r?\n/)[0] ?? '';
-      return firstLine.split(',').map((s) => s.trim()).filter(Boolean);
+      const firstLine = (chunk.split(/\r?\n/)[0] ?? '').replace(/^\uFEFF/, '');
+      return parseCsvLine(firstLine).map((s) => s.trim()).filter(Boolean);
     } finally {
       await fh.close();
     }
@@ -46,10 +46,11 @@ export async function readCsvRows(fileName: string, limit = 100, dataDir = path.
     const full = resolveCsvPath(fileName, dataDir);
     const raw = await fs.readFile(full, 'utf-8');
     const lines = raw.split(/\r?\n/).filter(Boolean);
-    const headers = (lines.shift() ?? '').split(',').map((s) => s.trim());
+    const headerLine = (lines.shift() ?? '').replace(/^\uFEFF/, '');
+    const headers = parseCsvLine(headerLine).map((s) => s.trim());
     const rows: Record<string, string>[] = [];
     for (const line of lines.slice(0, limit)) {
-      const cells = line.split(',');
+      const cells = parseCsvLine(line);
       const obj: Record<string, string> = {};
       headers.forEach((h, i) => {
         obj[h] = (cells[i] ?? '').trim();
@@ -60,6 +61,33 @@ export async function readCsvRows(fileName: string, limit = 100, dataDir = path.
   } catch {
     return [];
   }
+}
+
+
+function parseCsvLine(line: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i += 1) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i += 1; // skip escaped quote
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+    if (ch === ',' && !inQuotes) {
+      result.push(current);
+      current = '';
+      continue;
+    }
+    current += ch;
+  }
+  result.push(current);
+  return result;
 }
 
 

@@ -156,9 +156,9 @@ export default function EditorPage() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col bg-transparent text-slate-100">
+    <div className="flex h-dvh flex-col bg-transparent text-slate-100 overflow-hidden">
       <Header onUploadClick={() => setShowUploadModal(true)} />
-      <div className="grid flex-1 grid-cols-12 gap-3 p-3">
+      <div className="grid flex-1 grid-cols-12 gap-3 p-3 overflow-hidden min-h-0">
         <LeftPane
           keywordBadges={keywordBadges}
           columns={columns}
@@ -167,10 +167,10 @@ export default function EditorPage() {
         />
 
         {/* 可変リサイズ領域（エディタ + スプリッター + 結果） */}
-        <div ref={containerRef} className="col-span-10 flex items-stretch">
+        <div ref={containerRef} className="col-span-10 flex items-stretch min-h-0">
           {/* 左: エディタ領域 */}
           <div
-            className="flex min-w-0 flex-col gap-3"
+            className="flex min-w-0 min-h-0 flex-col gap-3"
             style={{ flexBasis: 0, flexGrow: editorRatio }}
           >
             <div>
@@ -227,10 +227,12 @@ export default function EditorPage() {
 
           {/* 右: 結果領域 */}
           <div
-            className="min-w-0"
+            className="min-h-0 min-w-0 flex flex-col"
             style={{ flexBasis: 0, flexGrow: 1 - editorRatio }}
           >
-            <ResultGrid rows={result ?? []} loading={loading} error={error} />
+            <div className="flex flex-1 overflow-hidden">
+              <ResultGrid rows={result ?? []} loading={loading} error={error} />
+            </div>
           </div>
         </div>
       </div>

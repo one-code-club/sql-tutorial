@@ -23,7 +23,7 @@ export function ResultGrid({ rows, loading, error }: Props) {
 
   const columns = Object.keys(rows[0] ?? {});
   return (
-    <div className="overflow-auto rounded-md border border-slate-700">
+    <div className="h-full w-full overflow-auto rounded-md border border-slate-700">
       <table className="min-w-full text-sm text-slate-100">
         <thead className="bg-slate-800">
           <tr>

@@ -35,7 +35,7 @@ export function LeftPane({ keywordBadges, columns, editorType }: Props) {
   }
 
   return (
-    <aside className="col-span-2 flex flex-col gap-3">
+    <aside className="col-span-2 flex flex-col gap-3 overflow-auto min-h-0">
       <div className="rounded-md border border-slate-700 bg-slate-900 p-3">
         <label className="mb-2 block text-sm font-medium text-slate-200">{t.selectDB}</label>
         <select

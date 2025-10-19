@@ -1,29 +1,49 @@
 ID,Country,Prefecture,State,Other_Country,Grade,Favorite_Subject,Device,Number_of_Lessons,Favorite_Fruit,Favorite_Game,Favorite_Animal,Favorite_Activity,Future_Dream,Sleep_Hours
-1,USA,,California,,3_3rd Grade,Math,Tablet,3,Apple,Simulation,Cat,Programming,Game Creator,9
-2,Japan,Tokyo,,,4_4th Grade,Physical Education,PC/Mac Computer,3,Melon,Action,Dog,Sports,Athlete,8
-3,Other,,,Canada,8_8th Grade,Music,PC/Mac Computer,3,Apple,Puzzle,Cat,Crafts,Programmer,9
-4,Japan,Ehime,,,5_5th Grade,Math,PC/Mac Computer,3,Mandarin Orange,Adventure,Dog,Riddles,Prefer Not to Answer,9
-5,Japan,Osaka,,,6_6th Grade,Physical Education,Mobile Phone,2,Watermelon,Action,Bird,Sports,Not Decided Yet,8
-6,Japan,Tokyo,,,4_4th Grade,Art & Crafts,PC/Mac Computer,3,Strawberry,Battle,Cat,Crafts,"Artist (Painter, Illustrator, etc.)",8
-7,Japan,Miyagi,,,6_6th Grade,Physical Education,Tablet,4,Kiwi,Action,Elephant,Sports,Athlete,8
-8,Japan,Yamaguchi,,,6_6th Grade,Physical Education,PC/Mac Computer,5,Grapes,Battle,Tiger,Sports,Not Decided Yet,8
-9,Japan,Yamaguchi,,,3_3rd Grade,Art & Crafts,Not Often Used,5,Strawberry,Card Games,Wombat,Crafts,Fashion Designer,8
-10,Japan,Osaka,,,9_9th Grade,Social Studies,PC/Mac Computer,4,Persimmon,Story,Snake,Music,Writer,10
-11,Japan,Tokyo,,,6_6th Grade,Self-Study,PC/Mac Computer,4,Melon,Action,Cat,Sports,Not Decided Yet,6
-12,Japan,Aichi,,,3_3rd Grade,Art & Crafts,PC/Mac Computer,1,Strawberry,Simulation,Fish,Crafts,Game Creator,9
-13,Japan,Gifu,,,5_5th Grade,Art & Crafts,Tablet,2,Peach,Sports,Rabbit,Drawing,Programmer,9
-14,Japan,Tokyo,,,4_4th Grade,Art & Crafts,PC/Mac Computer,3,Mandarin Orange,Action,Cat,Crafts,YouTuber,8
-15,Japan,Gifu,,,3_3rd Grade,Math,Tablet,2,Banana,Racing,Giraffe,Sports,Pilot,9
-16,Japan,Saitama,,,7_7th Grade,Science,Tablet,2,Pear,Puzzle,Cat,Programming,Game Creator,8
-17,Japan,Miyagi,,,5_5th Grade,Math,PC/Mac Computer,3,Cherry,Adventure,Cat,Programming,Game Creator,8
-18,Japan,Saitama,,,5_5th Grade,Home Economics,Not Often Used,2,Melon,Action,Cat,Programming,Engineer,40
-19,Japan,Tokyo,,,3_3rd Grade,Art & Crafts,PC/Mac Computer,3,Cherry,Adventure,Dog,Drawing,Fashion Designer,9
-20,Japan,Aichi,,,6_6th Grade,Physical Education,PC/Mac Computer,3,Pineapple,Simulation,Dog,Music,Musician,6
-21,Japan,Hyogo,,,4_4th Grade,Science,Tablet,4,Apple,Sandbox,Cat,Programming,Scientist/Researcher,8
-22,Japan,Kumamoto,,,7_7th Grade,Social Studies,Tablet,1,Pear,Puzzle,Cat,Riddles,Lawyer,7
-23,Japan,Iwate,,,4_4th Grade,Physical Education,Not Often Used,0,Orange,Action,Cat,Drawing,"Artist (Painter, Illustrator, etc.)",8
-24,Japan,Shizuoka,,,7_7th Grade,Science,PC/Mac Computer,2,Melon,Adventure,None,Programming,Game Creator,10
-25,Japan,Kumamoto,,,6_6th Grade,Physical Education,Mobile Phone,Abucus and trampoline,Strawberry,Simulation,Red Panda,Crafts,Not Decided Yet,9
-26,Japan,Kumamoto,,,8_8th Grade,Math,PC/Mac Computer,1,Watermelon,Sandbox,Penguin,Programming,Engineer,8
-27,Japan,Tokyo,,,7_7th Grade,Art & Crafts,Mobile Phone,2,Apple,Simulation,Cat,Drawing,Not Decided Yet,9
-28,Japan,Hyogo,,,6_6th Grade,Art & Crafts,Tablet,3,Pear,Puzzle,Cat,Drawing,YouTuber,8
+1,USA,,California,,3rd,Math,Tablet,3,Apple,Simulation,Cat,Programming,Game Creator,9
+2,Japan,Tokyo,,,4th,Physical Education,PC/Mac Computer,3,Melon,Action,Dog,Sports,Athlete,8
+3,Other,,,Canada,8th,Music,PC/Mac Computer,3,Apple,Puzzle,Cat,Crafts,Programmer,9
+4,Japan,Ehime,,,5th,Math,PC/Mac Computer,3,Mandarin Orange,Adventure,Dog,Riddles,Prefer Not to Answer,9
+5,Japan,Osaka,,,6th,Physical Education,Mobile Phone,2,Watermelon,Action,Bird,Sports,Not Decided Yet,8
+6,Japan,Tokyo,,,4th,Art & Crafts,PC/Mac Computer,3,Strawberry,Battle,Cat,Crafts,"Artist (Painter, Illustrator, etc.)",8
+7,Japan,Miyagi,,,6th,Physical Education,Tablet,4,Kiwi,Action,Elephant,Sports,Athlete,8
+8,Japan,Yamaguchi,,,6th,Physical Education,PC/Mac Computer,5,Grapes,Battle,Tiger,Sports,Not Decided Yet,8
+9,Japan,Yamaguchi,,,3rd,Art & Crafts,Not Often Used,5,Strawberry,Card Games,Wombat,Crafts,Fashion Designer,8
+10,Japan,Osaka,,,9th,Social Studies,PC/Mac Computer,4,Persimmon,Story,Snake,Music,Writer,10
+11,Japan,Tokyo,,,6th,Self-Study,PC/Mac Computer,4,Melon,Action,Cat,Sports,Not Decided Yet,6
+12,Japan,Aichi,,,3rd,Art & Crafts,PC/Mac Computer,1,Strawberry,Simulation,Fish,Crafts,Game Creator,9
+13,Japan,Gifu,,,5th,Art & Crafts,Tablet,2,Peach,Sports,Rabbit,Drawing,Programmer,9
+14,Japan,Tokyo,,,4th,Art & Crafts,PC/Mac Computer,3,Mandarin Orange,Action,Cat,Crafts,YouTuber,8
+15,Japan,Gifu,,,3rd,Math,Tablet,2,Banana,Racing,Giraffe,Sports,Pilot,9
+16,Japan,Saitama,,,7th,Science,Tablet,2,Pear,Puzzle,Cat,Programming,Game Creator,8
+17,Japan,Miyagi,,,5th,Math,PC/Mac Computer,3,Cherry,Adventure,Cat,Programming,Game Creator,8
+18,Japan,Saitama,,,5th,Home Economics,Not Often Used,2,Melon,Action,Cat,Programming,Engineer,40
+19,Japan,Tokyo,,,3rd,Art & Crafts,PC/Mac Computer,3,Cherry,Adventure,Dog,Drawing,Fashion Designer,9
+20,Japan,Aichi,,,6th,Physical Education,PC/Mac Computer,3,Pineapple,Simulation,Dog,Music,Musician,6
+21,Japan,Hyogo,,,4th,Science,Tablet,4,Apple,Sandbox,Cat,Programming,Scientist/Researcher,8
+22,Japan,Kumamoto,,,7th,Social Studies,Tablet,1,Pear,Puzzle,Cat,Riddles,Lawyer,7
+23,Japan,Iwate,,,4th,Physical Education,Not Often Used,0,Orange,Action,Cat,Drawing,"Artist (Painter, Illustrator, etc.)",8
+24,Japan,Shizuoka,,,7th,Science,PC/Mac Computer,2,Melon,Adventure,None,Programming,Game Creator,10
+25,Japan,Kumamoto,,,6th,Physical Education,Mobile Phone,Abucus and trampoline,Strawberry,Simulation,Red Panda,Crafts,Not Decided Yet,9
+26,Japan,Kumamoto,,,8th,Math,PC/Mac Computer,1,Watermelon,Sandbox,Penguin,Programming,Engineer,8
+27,Japan,Tokyo,,,7th,Art & Crafts,Mobile Phone,2,Apple,Simulation,Cat,Drawing,Not Decided Yet,9
+28,Japan,Hyogo,,,6th,Art & Crafts,Tablet,3,Pear,Puzzle,Cat,Drawing,YouTuber,8
+29,USA,,,,Adult,Math,PC/Mac Computer,2,Strawberry,Puzzle,Cat,Sports,Engineer,7
+30,Japan,Kanagawa,,,7th,Science,PC/Mac Computer,2,Apple,Action,Dog,Drawing,Game Creator,6
+31,Japan,Tokyo,,,8th,Math,Not Often Used,1,Pear,Action,Cat,Sports,Not Decided Yet,9
+32,Other,,,China/shanghai,5th,Math,PC/Mac Computer,3,Watermelon,Adventure,Dog,Riddles,Animal care worker,9
+33,Japan,Tokyo,,,6th,Math,Tablet,3,Apple,Adventure,Bird,Drawing,Scientist/Researcher,9
+34,Japan,Ibaraki,,,3rd,Art & Crafts,Tablet,1,Grapes,Adventure,Dog,Crafts,Animal care worker,8
+35,USA,,Washington,,5th,Physical Education,PC/Mac Computer,2,Strawberry,Simulation,Hamster,Sports,Pilot,9
+36,Other,,,China/shanghai,5th,Japanese Language,PC/Mac Computer,3,Pineapple,Action,Dog,Music,Not Decided Yet,9
+37,Japan,Kumamoto,,,5th,English,PC/Mac Computer,3,Do not like any,RPG,Dog,Do not like them much,Game Creator,9
+38,Other,,,Singapore,7th,Science,PC/Mac Computer,1,Pear,Adventure,Hamster,Sports,Scientist/Researcher,9
+39,Other,,,Hong Kong,4th,ICT,Tablet,0,Orange,Simulation,Cat,Programming,Game Creator,8
+40,Japan,Aichi,,,5th,Math,Tablet,2,Grapes,Puzzle,Cat,Riddles,Game Creator,8
+41,Japan,Chiba,,,7th,Math,Not Often Used,1,Mandarin Orange,None,Fish,Crafts,Not Decided Yet,9
+42,Japan,Miyagi,,,8th,Science,PC/Mac Computer,3,Grapes,Action,Cat,Drawing,Doctor,7
+43,Japan,Kumamoto,,,6th,Math,Tablet,5,Grapes,Action,Hamster,Sports,Not Decided Yet,9
+44,Japan,Tokyo,,,7th,Physical Education,Tablet,0,Grapes,Action,Dog,Sports,Game Creator,7
+45,Japan,Kumamoto,,,4th,Physical Education,Tablet,4,Pear,Sports,Cat,Drawing,"Artist (Painter, Illustrator, etc.)",8
+46,USA,,Washington,,3rd,Math,PC/Mac Computer,1,Strawberry,Puzzle,Dog,Music,Engineer,9
+47,Japan,Aichi,,,5th,Music,Not Often Used,3,Pear,Adventure,Dog,Music,Musician,8
+48,Japan,Saitama,,,8th,Science,Not Often Used,2,Watermelon,Adventure,Snake,Do not like them much,Animal care worker,6

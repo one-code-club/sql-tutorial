@@ -37,14 +37,14 @@ export function Header({ onUploadClick }: HeaderProps = {} as HeaderProps) {
             </Link>
             
             {/* Upload a screen-shotボタン */}
-            {onUploadClick && (
+            {/* {onUploadClick && (
               <button
                 onClick={onUploadClick}
                 className="rounded-md bg-brand-500 px-3 py-1.5 text-sm text-white hover:bg-brand-400 transition shadow-lg shadow-brand-500/20"
               >
                 {t.uploadScreenshot}
               </button>
-            )}
+            )} */}
           </>
         )}
       </div>

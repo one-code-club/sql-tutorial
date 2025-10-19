@@ -6,7 +6,7 @@ export const translations = {
     appTitle: 'CS in English: SQL Builder',
     logout: 'Logout',
     gallery: 'Gallery',
-    uploadScreenshot: 'Upload a screen-shot',
+    uploadScreenshot: 'Upload a screenshot',
     
     // Home page
     homeTitle: 'SQL Builder',
